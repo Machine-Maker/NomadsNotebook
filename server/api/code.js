@@ -3,6 +3,7 @@ import axios from 'axios'
 
 export default (req, res, next) => {
   // response.send('test!')
+  console.log(process.env.baseUrl)
   axios
     .post(
       `${process.env.OAUTH2_URL}/token`,
