@@ -1,5 +1,9 @@
 const colors = require('vuetify/es5/util/colors').default
 
+let baseUrl = 'http://127.0.0.1:3000'
+if (process.env.NODE_ENV === 'staging') baseUrl = 'https://nomads-staging.herokuapp.com'
+else if (process.env.NODE_ENV === 'production') baseUrl = 'https://nomadsnotebook.herokuapp.com'
+
 module.exports = {
   mode: 'universal',
   /*
@@ -20,6 +24,15 @@ module.exports = {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
+  serverMiddleware: [{ path: '/api/code', handler: '~/server/api/code.js' }],
+  /*
+   ** env
+   */
+  env: {
+    baseUrl,
+    clientId: process.env.CLIENT_ID,
+    oauth2Url: process.env.OAUTH2_URL
+  },
   /*
    ** Customize the progress-bar color
    */
@@ -31,7 +44,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }],
   /*
    ** Nuxt.js dev-modules
    */
@@ -48,7 +61,8 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    'cookie-universal-nuxt'
   ],
   /*
    ** Axios module configuration
