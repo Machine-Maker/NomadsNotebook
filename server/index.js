@@ -6,7 +6,7 @@ const app = express()
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
-config.dev = process.env.NODE_ENV !== 'production'
+config.dev = process.env.NODE_ENV === 'development'
 
 process.env.baseUrl = 'http://127.0.0.1:3000'
 if (process.env.NODE_ENV === 'staging') process.env.baseUrl = 'https://nomads-staging.herokuapp.com'
