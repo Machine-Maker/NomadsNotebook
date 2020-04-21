@@ -27,10 +27,10 @@ module.exports = {
     }
   ],
   // Server
-  server: {
-    host: process.env.HOST,
-    port: 3000
-  },
+  // server: {
+  //   host: process.env.HOST,
+  //   port: 3000
+  // },
   // context.env
   env: {
     baseUrl: process.env.BASE_URL,
