@@ -10,21 +10,23 @@ const pool = new Pool({
   }
 })
 
-const utils = {
-  formatQuery: (result, def = null) => {
-    return { results: result ? result.rows : def }
+class QueryError extends Error {
+  constructor(message, status = 500) {
+    super(message)
+    this.name = this.constructor.name
+    this.status = 500
   }
 }
 
-// const routes = {
-//   users: {
-//     list: async (req, res, client) => {
-//       const result = await client.query('SELECT * FROM users')
-//       res.status(200).send(formatQuery(result))
-//       client.release()
-//     }
-//   }
-// }
+const utils = {
+  formatQuery: (result, def = null) => {
+    return { results: result ? result.rows : def }
+  },
+  formatSingle: (result, def = null) => {
+    return { result: result ? result.rows[0] : def }
+  },
+  QueryError
+}
 
 export default async (req, res, next) => {
   const paths = req.path.split('/').filter((p) => !!p)
@@ -39,32 +41,25 @@ export default async (req, res, next) => {
     while (paths.length) {
       filePath += '/' + paths.shift()
     }
-    filePath += '.js'
-    const absFilePath = path.join(__dirname, filePath)
-    if (!fs.existsSync(absFilePath)) res.sendStatus(404)
+    let absFilePath = path.join(__dirname, filePath)
+    if (fs.existsSync(absFilePath)) {
+      if (fs.lstatSync(absFilePath).isDirectory()) {
+        absFilePath += '/index.js'
+      } else {
+        absFilePath += '.js'
+      }
+    } else res.sendStatus(404)
     try {
       const result = await require(absFilePath)(req, res, client, utils)
       res.status(200).send(result)
       client.release()
     } catch (err) {
-      console.error(err)
-      res.status(500).send(err)
+      if (err instanceof QueryError) {
+        res.status(err.status).send(err.message)
+      } else {
+        console.error(err)
+        res.status(500).send(err)
+      }
     }
-    //   let route = routes
-    //   while (paths.length) {
-    //     const curr = paths.shift()
-    //     if (!route[curr]) return res.sendStatus(404)
-    //     route = route[curr]
-    //   }
-    //   if (typeof route !== 'function') return res.sendStatus(404)
-    //   // console.log(route)
-    //   try {
-    //     const result = await route(req, res, client)
-    //     res.status(200).send(result)
-    //   } catch (err) {
-    //     console.error(err)
-    //     res.status(500).send(err)
-    //   }
-    // }
   }
 }
