@@ -3,5 +3,5 @@
   "arrowParens": "always",
   "singleQuote": true,
   "endOfLine": "lf",
-  "printWidth": 140
+  "printWidth": 120
 }

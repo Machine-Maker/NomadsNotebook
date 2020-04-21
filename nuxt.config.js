@@ -22,8 +22,12 @@ module.exports = {
   serverMiddleware: [
     { path: '/api/auth/token', handler: '~/server/api/auth/token.js' },
     {
-      path: '/api/db',
-      handler: '~/server/api/db/index.js'
+      path: '/api',
+      handler: '~/server/middleware/auth.js'
+    },
+    {
+      path: '/api',
+      handler: '~/server/api/index.js'
     }
   ],
   // Server
