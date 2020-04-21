@@ -5,9 +5,8 @@ const ACCESS_TOKEN = 'auth-access-token'
 const REFRESH_TOKEN = 'auth-refresh-token'
 
 export default ({ app, store, redirect, $axios, env }, inject) => {
-  const discordAuth = $axios.create({
-    baseURL: env.oauth2Url,
-    timeout: 1000
+  const api = $axios.create({
+    baseURL: `${env.baseUrl}/api`
   })
 
   class AuthService {
@@ -60,8 +59,9 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       return new Promise((resolve, reject) => {
         // check state
         if (queryParams.state !== sessionStorage.getItem('nonce')) return reject(new Error('Invalid state!'))
-        $axios
-          .get(`${env.baseUrl}/api/code?code=${queryParams.code}`)
+        const code = queryParams.code
+        api
+          .get(`/auth/token?${stringify({ code })}`)
           .then(({ data }) => {
             this.setTokens(data)
             return this.setUser()
@@ -78,23 +78,8 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
     refreshLogin() {
       return new Promise((resolve, reject) => {
         const refresh_token = app.$cookies.get(REFRESH_TOKEN)
-        discordAuth
-          .post(
-            '/token',
-            stringify({
-              client_id: env.clientId,
-              client_secret: env.clientSecret,
-              grant_type: 'refresh_token',
-              refresh_token,
-              redirect_uri: `${env.baseUrl}/login`,
-              scope: 'identify'
-            }),
-            {
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-              }
-            }
-          )
+        api
+          .get(`/auth/token?${stringify({ refresh_token })}`)
           .then(({ data }) => {
             this.setTokens(data)
             return this.setUser()

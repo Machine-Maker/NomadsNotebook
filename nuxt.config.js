@@ -2,9 +2,7 @@ const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
   mode: 'universal',
-  /*
-   ** Headers of the page
-   */
+  // vue-meta
   head: {
     titleTemplate: (titleChunk) => {
       return titleChunk ? `${titleChunk} - Nomad's Notebook` : "Nomad's Notebook"
@@ -20,38 +18,34 @@ module.exports = {
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
-  serverMiddleware: [{ path: '/api/code', handler: '~/server/api/code.js' }],
-  /*
-   ** env
-   */
+  // Server middleware (api)
+  serverMiddleware: [{ path: '/api/auth/token', handler: '~/server/api/auth/token.js' }],
+  // Server
+  server: {
+    host: '127.0.0.1',
+    port: 3000
+  },
+  // context.env
   env: {
     baseUrl: process.env.BASE_URL,
     clientId: process.env.CLIENT_ID,
     oauth2Url: process.env.OAUTH2_URL
   },
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#fff' },
-  /*
-   ** Global CSS
-   */
+  loading: {
+    color: '#ff9100',
+    height: '3px'
+  },
+  // Global css
   css: [],
-  /*
-   ** Plugins to load before mounting the App
-   */
+  // Plugins
   plugins: [{ src: '~/plugins/auth.js', mode: 'client' }],
-  /*
-   ** Nuxt.js dev-modules
-   */
+  // Dev plugins
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify'
   ],
-  /*
-   ** Nuxt.js modules
-   */
+  // Modules
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
@@ -60,15 +54,9 @@ module.exports = {
     '@nuxtjs/dotenv',
     'cookie-universal-nuxt'
   ],
-  /*
-   ** Axios module configuration
-   ** See https://axios.nuxtjs.org/options
-   */
+  // Axios
   axios: {},
-  /*
-   ** vuetify module configuration
-   ** https://github.com/nuxt-community/vuetify-module
-   */
+  // Vuetify
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
@@ -85,6 +73,10 @@ module.exports = {
         }
       }
     }
+  },
+  // vue-router
+  router: {
+    middleware: ['auth']
   },
   /*
    ** Build configuration
