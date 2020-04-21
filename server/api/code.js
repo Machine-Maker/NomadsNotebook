@@ -2,9 +2,6 @@ import { stringify } from 'querystring'
 import axios from 'axios'
 
 export default (req, res, next) => {
-  // response.send('test!')
-  console.log(process.env.baseUrl)
-  console.log(process.env.NODE_ENV)
   axios
     .post(
       `${process.env.OAUTH2_URL}/token`,
@@ -13,7 +10,7 @@ export default (req, res, next) => {
         client_secret: process.env.CLIENT_SECRET,
         grant_type: 'authorization_code',
         code: req.query.code,
-        redirect_uri: `${process.env.baseUrl}/login`,
+        redirect_uri: `${process.env.BASE_URL}/login`,
         scope: 'identify'
       }),
       {
