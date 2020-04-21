@@ -28,7 +28,7 @@ module.exports = {
   ],
   // Server
   server: {
-    host: '127.0.0.1',
+    host: process.env.HOST,
     port: 3000
   },
   // context.env
