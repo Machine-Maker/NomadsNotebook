@@ -19,7 +19,13 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   // Server middleware (api)
-  serverMiddleware: [{ path: '/api/auth/token', handler: '~/server/api/auth/token.js' }],
+  serverMiddleware: [
+    { path: '/api/auth/token', handler: '~/server/api/auth/token.js' },
+    {
+      path: '/api/db',
+      handler: '~/server/api/db/index.js'
+    }
+  ],
   // Server
   server: {
     host: '127.0.0.1',
