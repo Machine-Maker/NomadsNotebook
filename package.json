@@ -10,7 +10,8 @@
     "start": "cross-env node server/index.js",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "stage": "git push staging HEAD:master"
+    "stage": "git push staging HEAD:master",
+    "prod": "git push production HEAD:master"
   },
   "lint-staged": {
     "*.{js,vue}": "yarn lint"
