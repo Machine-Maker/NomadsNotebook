@@ -10,6 +10,8 @@ const whitelist = ['/auth/token', '/auth/verify']
 export default (req, res, next) => {
   if (whitelist.includes(req.path)) return next()
 
+  console.log(req.get('Authorization'))
+
   api
     .get(`/auth/verify?${stringify({ perms: 'USE_API', test: req.query.test || 'false' })}`, {
       headers: {

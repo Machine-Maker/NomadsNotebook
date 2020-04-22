@@ -47,7 +47,7 @@ module.exports = {
   // Global css
   css: [],
   // Plugins
-  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }],
+  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }, '~/plugins/api.js'],
   // Dev plugins
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
@@ -61,7 +61,8 @@ module.exports = {
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
-    'cookie-universal-nuxt'
+    'cookie-universal-nuxt',
+    'nuxt-leaflet'
   ],
   // Axios
   axios: {},

@@ -101,6 +101,11 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       store.commit('auth/login', { access_token, refresh_token })
     }
 
+    getAccessToken() {
+      if (!store.state.auth.loggedIn) return 'None'
+      return app.$cookies.get(ACCESS_TOKEN) || 'None'
+    }
+
     setUser() {
       return new Promise((resolve, reject) => {
         if (!store.state.auth.loggedIn || !store.state.auth.access_token) reject(new Error('Not logged in!'))

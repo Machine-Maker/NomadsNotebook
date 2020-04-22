@@ -18,9 +18,9 @@ module.exports = async (req) => {
     }
   }
 
-  if (process.env.NODE_ENV === 'development' && req.query.test !== 'true') return 'OK'
+  if (process.env.NODE_ENV === 'development' && req.query.test === 'true') return 'OK'
   else if (!req.get('Authorization') || !req.get('Authorization').split(' ')[1]) {
-    throw new ApiError('Unauthorized', 401)
+    throw new ApiError('Unauthorized: No Authorization header found!', 401)
   }
 
   try {

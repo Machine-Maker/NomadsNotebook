@@ -53,6 +53,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
           to: '/inspire'
+        },
+        {
+          icon: 'mdi-map',
+          title: 'Map',
+          to: '/map'
         }
       ],
       title: "Nomad's Notebook"
