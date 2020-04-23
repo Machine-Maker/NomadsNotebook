@@ -36,6 +36,9 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
         } else {
           resolve({ status: 'not logged in' })
         }
+      }).catch((err) => {
+        console.log(err)
+        this.logout()
       })
     }
 
@@ -115,7 +118,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
               store.commit('auth/setUser', data)
               resolve({ status: 'set user' })
             })
-            .catch((err) => reject(err.response))
+            .catch((err) => reject(err.response.data))
         }
       })
     }
