@@ -37,7 +37,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
           resolve({ status: 'not logged in' })
         }
       }).catch((err) => {
-        console.log(err)
+        console.error(err.error || err)
         this.logout()
       })
     }
@@ -64,7 +64,11 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
         if (queryParams.state !== sessionStorage.getItem('nonce')) return reject(new Error('Invalid state!'))
         const code = queryParams.code
         api
-          .get(`/auth/token?${stringify({ code })}`)
+          .get(`/auth/token`, {
+            headers: {
+              Code: code
+            }
+          })
           .then(({ data }) => {
             this.setTokens(data)
             return this.setUser()
@@ -82,7 +86,11 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       return new Promise((resolve, reject) => {
         const refresh_token = app.$cookies.get(REFRESH_TOKEN)
         api
-          .get(`/auth/token?${stringify({ refresh_token })}`)
+          .get(`/auth/refresh`, {
+            headers: {
+              'Refresh-Token': refresh_token
+            }
+          })
           .then(({ data }) => {
             this.setTokens(data)
             return this.setUser()
@@ -90,7 +98,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
           .then(() => {
             resolve({ status: 'token refreshed' })
           })
-          .catch((err) => reject(err.response))
+          .catch((err) => reject(err.response.data))
       })
     }
 

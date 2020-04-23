@@ -1,8 +1,10 @@
 import { errors } from '../validators'
-import token, { validate } from './token'
+import token, { codeValidate } from './token'
 import verify from './verify'
+import refresh, { refreshValidate } from './refresh'
 
 export default (router) => {
-  router.get('/auth/token', [...validate, errors], token)
+  router.get('/auth/token', [...codeValidate, errors], token)
+  router.get('/auth/refresh', [...refreshValidate, errors], refresh)
   router.get('/auth/verify', verify)
 }

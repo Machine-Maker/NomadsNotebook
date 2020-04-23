@@ -1,15 +1,15 @@
 import { stringify } from 'querystring'
-import { query } from 'express-validator'
+import { header } from 'express-validator'
 import axios from 'axios'
 
-const oauth2 = axios.create({
+export const oauth2 = axios.create({
   baseURL: process.env.OAUTH2_URL,
   headers: {
     'Content-Type': 'application/x-www-form-urlencoded'
   }
 })
 
-const baseRequest = {
+export const baseRequest = {
   client_id: process.env.CLIENT_ID,
   client_secret: process.env.CLIENT_SECRET,
   redirect_uri: `${process.env.BASE_URL}/login`,
@@ -17,43 +17,21 @@ const baseRequest = {
 }
 
 export default (req, res) => {
-  let tokenPromise = null
-  if (req.query.code) {
-    tokenPromise = oauth2.post(
+  oauth2
+    .post(
       '/token',
       stringify({
         ...baseRequest,
         grant_type: 'authorization_code',
-        code: req.query.code
+        code: req.get('Code')
       })
     )
-  } else if (req.query.refresh_token) {
-    tokenPromise = oauth2.post(
-      '/token',
-      stringify({
-        ...baseRequest,
-        grant_type: 'refresh_token',
-        refresh_token: req.query.refresh_token
-      })
-    )
-  } else {
-    return res.status(500).send(new Error('No valid query params!'))
-  }
-
-  tokenPromise
     .then(({ data }) => {
       res.status(200).json(data)
     })
     .catch((err) => {
-      res.status(500).json(err.response.data)
+      res.status(err.response.status).json(err.response.data)
     })
 }
 
-export const validate = [
-  query('code', 'No code query param provided!')
-    .if((value, { req }) => !req.query.refresh_token)
-    .exists(),
-  query('refresh_token', 'No refresh_token query param provided!')
-    .if((value, { req }) => !req.query.code)
-    .exists()
-]
+export const codeValidate = [header('Code', 'No code query param provided!').exists()]
