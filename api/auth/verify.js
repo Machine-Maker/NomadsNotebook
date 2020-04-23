@@ -1,11 +1,10 @@
 import axios from 'axios'
-import { ApiError } from '../../errors/_index.js'
 
 const auth = axios.create({
   baseURL: 'https://discordapp.com/api'
 })
 
-module.exports = async (req) => {
+export default async (req, res) => {
   let perms = []
   if (!req.query.perms) {
     perms.push('USE_API')
@@ -13,14 +12,14 @@ module.exports = async (req) => {
     perms = req.query.perms.split(',')
     for (const perm of perms) {
       if (!global.perms[perm]) {
-        throw new ApiError(`${perm} is not a valid permission!`, 400)
+        return res.status(400).send(`${perm} is not a valid permission!`)
       }
     }
   }
 
-  if (process.env.NODE_ENV === 'development' && req.query.test !== 'true') return 'OK'
+  if (process.env.NODE_ENV === 'development' && req.query.test !== 'true') return res.sendStatus(200)
   else if (!req.get('Authorization') || !req.get('Authorization').split(' ')[1]) {
-    throw new ApiError('Unauthorized', 401)
+    return res.sendStatus(401)
   }
 
   try {
@@ -34,23 +33,19 @@ module.exports = async (req) => {
     const client = await global.pool.connect()
     const { rows, rowCount } = await client.query('SELECT permissions FROM users WHERE snowflake=$1', [id])
     client.release()
-    if (!rowCount) throw new ApiError('Unauthorized', 401)
+    if (!rowCount) return res.sendStatus(401)
     for (const perm of perms) {
-      if (!(parseInt(rows[0].permissions, 2) & global.perms[perm])) {
-        throw new ApiError('Unauthorized', 401)
+      if (!(parseInt(rows[0].permissions, 2) & global.perms[perm].b)) {
+        return res.sendStatus(401)
       }
     }
-    return 'OK'
+    return res.sendStatus(200)
   } catch (err) {
-    let response = null
-    if (err instanceof ApiError) {
-      response = err
-    } else if (err.response) {
-      response = new ApiError(err.response.data.message, err.response.status, err.response.data.code)
+    if (err.response) {
+      res.status(err.response.status).send(err.response.data.message)
     } else {
       console.log(err)
-      response = new ApiError(err.response, 500)
+      res.status(500).send(err)
     }
-    throw response
   }
 }

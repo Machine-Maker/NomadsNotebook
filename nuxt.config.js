@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser')
 const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
@@ -19,17 +20,7 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   // Server middleware (api)
-  serverMiddleware: [
-    { path: '/api/auth/token', handler: '~/server/api/auth/token.js' },
-    {
-      path: '/api',
-      handler: '~/server/middleware/auth.js'
-    },
-    {
-      path: '/api',
-      handler: '~/server/api/index.js'
-    }
-  ],
+  serverMiddleware: [bodyParser.json(), '~/api'],
   // Server
   server: {
     host: process.env.HOST

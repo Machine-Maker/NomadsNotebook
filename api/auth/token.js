@@ -1,4 +1,5 @@
 import { stringify } from 'querystring'
+import { query } from 'express-validator'
 import axios from 'axios'
 
 const oauth2 = axios.create({
@@ -15,7 +16,7 @@ const baseRequest = {
   scope: 'identify'
 }
 
-export default (req, res, next) => {
+export default (req, res) => {
   let tokenPromise = null
   if (req.query.code) {
     tokenPromise = oauth2.post(
@@ -47,3 +48,12 @@ export default (req, res, next) => {
       res.status(500).json(err.response.data)
     })
 }
+
+export const validate = [
+  query('code', 'No code query param provided!')
+    .if((value, { req }) => !req.query.refresh_token)
+    .exists(),
+  query('refresh_token', 'No refresh_token query param provided!')
+    .if((value, { req }) => !req.query.code)
+    .exists()
+]
