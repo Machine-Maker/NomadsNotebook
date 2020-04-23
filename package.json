@@ -31,7 +31,8 @@
     "express": "^4.16.4",
     "express-validator": "^6.4.0",
     "nuxt": "^2.0.0",
-    "pg": "^8.0.2"
+    "pg": "^8.0.2",
+    "swagger-ui-express": "^4.1.4"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",

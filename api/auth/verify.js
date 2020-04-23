@@ -11,21 +11,26 @@ const discordApi = axios.create({
 export default (req, res, next) => {
   discordApi
     .get('/users/@me', {
-      headers: `Bearer ${req.get('Authorization').split(' ')[1]}`
+      headers: {
+        Authorization: `Bearer ${req.get('Authorization').split(' ')[1]}`
+      }
     })
     .then(({ data: { id } }) => {
+      console.log('debug1')
       return new Promise((resolve, reject) => {
         global.pool.connect((err, client, release) => {
-          if (err) return reject(err)
-          resolve({ id, client, release })
+          if (err) reject(err)
+          else resolve({ id, client, release })
         })
       })
     })
     .then(({ id, client, release }) => {
+      console.log('debug2')
       return new Promise((resolve, reject) => {
         client.query('SELECT permissions FROM users WHERE snowflake=$1', [id], (err, { rows, rowCount }) => {
           release()
           if (err) return reject(err)
+          console.log('debug3')
           if (!rowCount) return res.sendStatus(400)
           if (!req.query.perms.split(',').every((p) => parseInt(rows[0].permissions, 2) & perms[p].b))
             res.sendStatus(401)
@@ -34,7 +39,8 @@ export default (req, res, next) => {
       })
     })
     .catch((err) => {
-      if (err.response) res.status(res.response.status).send(err.response.data)
+      console.log('debug4')
+      if (err.response) res.status(err.response.status).send(err.response.data)
       else next(err)
     })
 }

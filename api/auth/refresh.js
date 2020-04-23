@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import { header } from 'express-validator'
+import { query } from 'express-validator'
 
 import { oauth2, baseRequest } from './token'
 
@@ -10,7 +10,7 @@ export default (req, res) => {
       stringify({
         ...baseRequest,
         grant_type: 'refresh_token',
-        refresh_token: req.get('Refresh-Token')
+        refresh_token: req.query.refresh_token
       })
     )
     .then(({ data }) => {
@@ -21,4 +21,4 @@ export default (req, res) => {
     })
 }
 
-export const refreshValidate = [header('Refresh-Token', 'No Token header found!').exists()]
+export const refreshValidate = [query('refresh_token', 'No refresh_token query param found!').exists()]

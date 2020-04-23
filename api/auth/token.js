@@ -1,5 +1,5 @@
 import { stringify } from 'querystring'
-import { header } from 'express-validator'
+import { query } from 'express-validator'
 import axios from 'axios'
 
 export const oauth2 = axios.create({
@@ -23,7 +23,7 @@ export default (req, res) => {
       stringify({
         ...baseRequest,
         grant_type: 'authorization_code',
-        code: req.get('Code')
+        code: req.query.code
       })
     )
     .then(({ data }) => {
@@ -34,4 +34,4 @@ export default (req, res) => {
     })
 }
 
-export const codeValidate = [header('Code', 'No code query param provided!').exists()]
+export const codeValidate = [query('code', 'No code query param provided!').exists()]

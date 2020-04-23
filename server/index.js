@@ -1,10 +1,8 @@
 require('dotenv').config()
 const express = require('express')
 const consola = require('consola')
-const { Pool } = require('pg')
 const { Nuxt, Builder } = require('nuxt')
 const app = express()
-const axios = require('axios')
 const config = require('../nuxt.config.js')
 
 // Import and Set Nuxt.js options

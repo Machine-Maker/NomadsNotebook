@@ -1,3 +1,5 @@
+const path = require('path')
+const express = require('express')
 const bodyParser = require('body-parser')
 const colors = require('vuetify/es5/util/colors').default
 
@@ -20,7 +22,11 @@ module.exports = {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
   // Server middleware (api)
-  serverMiddleware: [bodyParser.json(), '~/api'],
+  serverMiddleware: [
+    bodyParser.json(),
+    { path: '/oauth2-redirect.html', handler: express.static(path.join(__dirname, '/docs/oauth2-redirect.html')) },
+    '~/api'
+  ],
   // Server
   server: {
     host: process.env.HOST
