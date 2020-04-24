@@ -8,6 +8,7 @@ import * as swaggerConfig from '../docs/reference/API.v1.json'
 import perms from './utils/perms'
 import auth from './auth/'
 import users from './users'
+import maps from './maps'
 
 const router = Router()
 
@@ -37,12 +38,12 @@ global.perms = perms
 
 auth(router)
 users(router)
+maps(router)
 
 router.use((err, req, res, next) => {
-  console.log(Object.keys(err))
   console.error(err.message)
   if (process.env.NODE_ENV === 'development') console.error(err.stack)
-  res.status(500).json({ type: err.constructor.name, msg: err.message, stack: err.stack })
+  res.status(500).json({ type: err.constructor.name, msg: err.message, stack: err.stack, err })
 })
 
 export default {

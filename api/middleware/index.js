@@ -1,3 +1,4 @@
 import auth from './auth'
+import errors from './errors'
 
-export { auth }
+export { auth, errors }

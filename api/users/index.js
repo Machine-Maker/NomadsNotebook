@@ -1,9 +1,8 @@
-import { auth } from '../middleware'
-import { errors } from '../validators'
+import { auth, errors } from '../middleware'
 import { formatQuery } from '../utils'
-import get, { userParam } from './get'
-import add from './add'
-import remove from './remove'
+import read, { userParam } from './read'
+import create from './create'
+import del from './delete'
 import update, { permissionBody } from './update'
 
 export default (router) => {
@@ -14,11 +13,11 @@ export default (router) => {
     res.status(200).send(formatQuery(results))
   })
 
-  router.get('/users/:user', [auth(), ...userParam, errors], get)
+  router.get('/users/:user', [auth(), ...userParam, errors], read)
 
-  router.post('/users/:user', [auth('ADD_USER'), ...userParam, ...permissionBody, errors], add)
+  router.post('/users/:user', [auth('ADD_USER'), ...userParam, ...permissionBody, errors], create)
 
-  router.delete('/users/:user', [auth('DELETE_USER'), ...userParam, errors], remove)
+  router.delete('/users/:user', [auth('DELETE_USER'), ...userParam, errors], del)
 
   router.put('/users/:user', [auth('EDIT_USER'), ...userParam, ...permissionBody, errors], update)
 }

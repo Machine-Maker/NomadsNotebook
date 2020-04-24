@@ -9,7 +9,7 @@ export default async (req, res) => {
   const results = await client.query(update, [req.body.permissions, req.params.user])
   client.release()
   const user = { snowflake: req.params.user, permissions: req.body.permissions }
-  if (!results.rowCount) res.status(204).send(user)
+  if (!results.rowCount) res.sendStatus(204)
   else res.status(200).send(user)
 }
 

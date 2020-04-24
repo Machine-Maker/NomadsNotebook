@@ -1,4 +1,4 @@
-import { errors } from '../validators'
+import { errors } from '../middleware'
 import token, { codeValidate } from './token'
 import verify, { verifyValidate } from './verify'
 import refresh, { refreshValidate } from './refresh'
