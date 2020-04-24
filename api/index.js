@@ -37,6 +37,13 @@ global.perms = perms
 auth(router)
 users(router)
 
+router.use((err, req, res, next) => {
+  console.log(Object.keys(err))
+  console.error(err.message)
+  if (process.env.NODE_ENV === 'development') console.error(err.stack)
+  res.status(500).json({ type: err.constructor.name, msg: err.message, stack: err.stack })
+})
+
 export default {
   path: '/api',
   handler: router

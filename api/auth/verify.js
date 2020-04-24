@@ -9,6 +9,7 @@ const discordApi = axios.create({
 })
 
 export default (req, res, next) => {
+  if (process.env.NODE_ENV === 'development' && req.query.test !== 'true') return res.sendStatus(200)
   discordApi
     .get('/users/@me', {
       headers: {
@@ -16,7 +17,6 @@ export default (req, res, next) => {
       }
     })
     .then(({ data: { id } }) => {
-      console.log('debug1')
       return new Promise((resolve, reject) => {
         global.pool.connect((err, client, release) => {
           if (err) reject(err)
@@ -25,12 +25,10 @@ export default (req, res, next) => {
       })
     })
     .then(({ id, client, release }) => {
-      console.log('debug2')
       return new Promise((resolve, reject) => {
         client.query('SELECT permissions FROM users WHERE snowflake=$1', [id], (err, { rows, rowCount }) => {
           release()
           if (err) return reject(err)
-          console.log('debug3')
           if (!rowCount) return res.sendStatus(400)
           if (!req.query.perms.split(',').every((p) => parseInt(rows[0].permissions, 2) & perms[p].b))
             res.sendStatus(401)
@@ -39,7 +37,6 @@ export default (req, res, next) => {
       })
     })
     .catch((err) => {
-      console.log('debug4')
       if (err.response) res.status(err.response.status).send(err.response.data)
       else next(err)
     })
@@ -52,7 +49,9 @@ export const verifyValidate = [
   header('Authorization')
     .if((value, { req }) => process.env.NODE_ENV !== 'development' || req.query.test === 'true')
     .exists()
-    .custom((value, { req }) => {
-      if (!req.get('Authorization').split(' ')[1]) throw new Error('Authorization header is not formatted correctly')
+    .bail()
+    .custom((value) => {
+      if (!value.split(' ')[1]) throw new Error('Authorization header is not formatted correctly')
+      return true
     })
 ]

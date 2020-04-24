@@ -33,7 +33,9 @@
     "/auth/token": {
       "get": {
         "summary": "AccessToken - Code",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "operationId": "get-auth-token",
         "description": "Accepts a code query param and returns an OAuth2 Access Token response",
         "parameters": [
@@ -75,7 +77,9 @@
     "/auth/refresh": {
       "get": {
         "summary": "Access Token - Refresh",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -116,7 +120,9 @@
     "/auth/verify": {
       "get": {
         "summary": "Verify",
-        "tags": ["Authentication"],
+        "tags": [
+          "Authentication"
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -147,9 +153,131 @@
         "description": "Checks if user has specified permissions",
         "security": [
           {
-            "Discord": ["identify"]
+            "Discord": [
+              "identify"
+            ]
           }
         ]
+      }
+    },
+    "/users/{user}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "user",
+          "in": "path",
+          "required": true,
+          "description": "User snowflake"
+        }
+      ],
+      "get": {
+        "summary": "Get a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content (No user with that snowflake)"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-users-user",
+        "description": "Retrieves a user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {},
+        "operationId": "delete-users-user",
+        "description": "Deletes a user"
+      },
+      "put": {
+        "summary": "Update a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {},
+        "operationId": "put-users-user",
+        "description": "Updates a user's information"
+      },
+      "post": {
+        "summary": "Create a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-users-user",
+        "description": "Adds a new user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "permissions": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "permissions": "000000010"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Default Permissions"
+        }
       }
     }
   },
@@ -174,7 +302,10 @@
           },
           "token_type": {
             "type": "string",
-            "enum": ["Bearer", "MAC"]
+            "enum": [
+              "Bearer",
+              "MAC"
+            ]
           },
           "expires_in": {
             "type": "integer",
@@ -223,7 +354,35 @@
             ]
           }
         },
-        "x-tags": ["Validation"]
+        "x-tags": [
+          "Validation"
+        ]
+      },
+      "User": {
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "snowflake": {
+            "type": "string",
+            "description": "Discord snowflake"
+          },
+          "permissions": {
+            "type": "string",
+            "minLength": 11,
+            "maxLength": 11,
+            "description": "Permissions bitfield"
+          }
+        },
+        "description": "User object",
+        "x-tags": [
+          "Users"
+        ],
+        "x-examples": {
+          "Example": {
+            "snowflake": "123456789123456789",
+            "permissions": "110010010"
+          }
+        }
       }
     },
     "parameters": {
