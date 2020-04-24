@@ -1,3 +1,6 @@
+const path = require('path')
+const express = require('express')
+const bodyParser = require('body-parser')
 const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
@@ -20,15 +23,9 @@ module.exports = {
   },
   // Server middleware (api)
   serverMiddleware: [
-    { path: '/api/auth/token', handler: '~/server/api/auth/token.js' },
-    {
-      path: '/api',
-      handler: '~/server/middleware/auth.js'
-    },
-    {
-      path: '/api',
-      handler: '~/server/api/index.js'
-    }
+    bodyParser.json(),
+    { path: '/oauth2-redirect.html', handler: express.static(path.join(__dirname, '/docs/oauth2-redirect.html')) },
+    '~/api'
   ],
   // Server
   server: {

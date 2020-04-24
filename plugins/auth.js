@@ -36,6 +36,9 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
         } else {
           resolve({ status: 'not logged in' })
         }
+      }).catch((err) => {
+        console.error(err.error || err)
+        this.logout()
       })
     }
 
@@ -79,7 +82,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       return new Promise((resolve, reject) => {
         const refresh_token = app.$cookies.get(REFRESH_TOKEN)
         api
-          .get(`/auth/token?${stringify({ refresh_token })}`)
+          .get(`/auth/refresh?${stringify({ refresh_token })}`)
           .then(({ data }) => {
             this.setTokens(data)
             return this.setUser()
@@ -87,7 +90,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
           .then(() => {
             resolve({ status: 'token refreshed' })
           })
-          .catch((err) => reject(err.response))
+          .catch((err) => reject(err.response.data))
       })
     }
 
@@ -120,7 +123,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
               store.commit('auth/setUser', data)
               resolve({ status: 'set user' })
             })
-            .catch((err) => reject(err.response))
+            .catch((err) => reject(err.response.data))
         }
       })
     }

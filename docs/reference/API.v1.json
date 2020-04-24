@@ -1,0 +1,502 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Nomad's Notebook API",
+    "version": "1.0",
+    "description": "Backend API for Nomad's Notebook, a helper webapp for Last Oasis.",
+    "contact": {
+      "name": "Machine Maker",
+      "email": "machinemaker3@gmail.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3000/api",
+      "description": "Local"
+    },
+    {
+      "url": "https://nomads-staging.herokuapp.com/api",
+      "description": "Staging"
+    },
+    {
+      "url": "https://nomadsnotebook.herokuapp.com/api",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Endpoints relating to user authentication"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints relating to user management"
+    }
+  ],
+  "paths": {
+    "/auth/token": {
+      "get": {
+        "summary": "AccessToken - Code",
+        "tags": [
+          "Authentication"
+        ],
+        "operationId": "get-auth-token",
+        "description": "Accepts a code query param and returns an OAuth2 Access Token response",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "OAuth2 Authorization Code",
+            "name": "code",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                },
+                "examples": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "get": {
+        "summary": "Access Token - Refresh",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessToken"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-auth-refresh",
+        "description": "Retrieves an Access Token response using a refresh_token.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "refresh_token",
+            "description": "OAuth2 Refresh Token",
+            "required": true
+          }
+        ]
+      }
+    },
+    "/auth/verify": {
+      "get": {
+        "summary": "Verify",
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request (No users found with that snowflake)"
+          },
+          "401": {
+            "description": "Unauthorized (Missing requested permission)"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-auth-verify",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PermissionsQuery"
+          }
+        ],
+        "description": "Checks if user has specified permissions",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{user}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "user",
+          "in": "path",
+          "required": true,
+          "description": "User snowflake"
+        }
+      ],
+      "get": {
+        "summary": "Get a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content (No user with that snowflake)"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-users-user",
+        "description": "Retrieves a user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "summary": "Delete a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "delete-users-user",
+        "description": "Deletes a user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content (No user with that snowflake)"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "put-users-user",
+        "description": "Updates a user's information",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionBody"
+              },
+              "examples": {}
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a User",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "post-users-user",
+        "description": "Adds a new user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionBody"
+              },
+              "examples": {}
+            }
+          },
+          "description": "Default Permissions"
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccessToken": {
+        "title": "AccessToken",
+        "type": "object",
+        "description": "See [Access Token Response](https://discordapp.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-response)",
+        "x-examples": {
+          "Example": {
+            "access_token": "6qrZcUqja7812RVdnEKjpzOL4CvHBFG",
+            "token_type": "Bearer",
+            "expires_in": 604800,
+            "refresh_token": "D43f5y0ahjqew82jZ4NViEr2YafMKhue",
+            "scope": "identify"
+          }
+        },
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer",
+              "MAC"
+            ]
+          },
+          "expires_in": {
+            "type": "integer",
+            "default": 604800,
+            "format": "int32"
+          },
+          "refresh_token": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      },
+      "ValidateError": {
+        "title": "ValidateError",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "location": {
+                  "type": "string"
+                },
+                "msg": {
+                  "type": "string"
+                },
+                "param": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "description": "Sent when the query/body/headers/params are invalid.",
+        "x-examples": {
+          "Example": {
+            "errors": [
+              {
+                "location": "body",
+                "msg": "Invalid value",
+                "param": "username"
+              }
+            ]
+          }
+        },
+        "x-tags": [
+          "Validation"
+        ]
+      },
+      "User": {
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "snowflake": {
+            "type": "string",
+            "description": "Discord snowflake"
+          },
+          "permissions": {
+            "type": "string",
+            "minLength": 11,
+            "maxLength": 11,
+            "description": "Permissions bitfield"
+          }
+        },
+        "description": "User object",
+        "x-tags": [
+          "Users"
+        ],
+        "x-examples": {
+          "Example": {
+            "snowflake": "123456789123456789",
+            "permissions": "110010010"
+          }
+        }
+      },
+      "PermissionBody": {
+        "title": "PermissionBody",
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "string",
+            "description": "Permissions bitfield",
+            "pattern": "^(0|1){9}$"
+          }
+        },
+        "required": [
+          "permissions"
+        ],
+        "x-examples": {
+          "Example": {
+            "permissions": "000000010"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "PermissionsQuery": {
+        "name": "perms",
+        "in": "query",
+        "description": "List of permissions",
+        "required": true,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "securitySchemes": {
+      "Discord": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "https://discordapp.com/api/oauth2/authorize",
+            "refreshUrl": "https://discordapp.com/api/oauth2/token",
+            "scopes": {
+              "identify": "User Profile"
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": []
+}
