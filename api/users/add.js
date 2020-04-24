@@ -1,7 +1,3 @@
-import { body } from 'express-validator'
-
-import { perms } from '../utils'
-
 const insert = 'INSERT INTO users(snowflake, permissions) VALUES ($1, $2)'
 
 export default async (req, res) => {

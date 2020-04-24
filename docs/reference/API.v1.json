@@ -26,7 +26,11 @@
   "tags": [
     {
       "name": "Authentication",
-      "description": "Endpoints relating to User Authentication"
+      "description": "Endpoints relating to user authentication"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints relating to user management"
     }
   ],
   "paths": {
@@ -217,18 +221,83 @@
         "tags": [
           "Users"
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
         "operationId": "delete-users-user",
-        "description": "Deletes a user"
+        "description": "Deletes a user",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
       },
       "put": {
         "summary": "Update a User",
         "tags": [
           "Users"
         ],
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content (No user with that snowflake)"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
         "operationId": "put-users-user",
-        "description": "Updates a user's information"
+        "description": "Updates a user's information",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PermissionBody"
+              },
+              "examples": {}
+            }
+          }
+        }
       },
       "post": {
         "summary": "Create a User",
@@ -242,6 +311,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
                 }
               }
             }
@@ -260,20 +339,9 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "permissions": {
-                    "type": "string"
-                  }
-                }
+                "$ref": "#/components/schemas/PermissionBody"
               },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "permissions": "000000010"
-                  }
-                }
-              }
+              "examples": {}
             }
           },
           "description": "Default Permissions"
@@ -381,6 +449,25 @@
           "Example": {
             "snowflake": "123456789123456789",
             "permissions": "110010010"
+          }
+        }
+      },
+      "PermissionBody": {
+        "title": "PermissionBody",
+        "type": "object",
+        "properties": {
+          "permissions": {
+            "type": "string",
+            "description": "Permissions bitfield",
+            "pattern": "^(0|1){9}$"
+          }
+        },
+        "required": [
+          "permissions"
+        ],
+        "x-examples": {
+          "Example": {
+            "permissions": "000000010"
           }
         }
       }

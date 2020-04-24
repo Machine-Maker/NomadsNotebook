@@ -1,5 +1,6 @@
 import axios from 'axios'
 import express from 'express'
+import Router from 'express-promise-router'
 import { Pool } from 'pg'
 import { serve, setup } from 'swagger-ui-express'
 
@@ -8,7 +9,7 @@ import perms from './utils/perms'
 import auth from './auth/'
 import users from './users'
 
-const router = express.Router()
+const router = Router()
 
 const app = express()
 router.use((req, res, next) => {
