@@ -34,12 +34,12 @@
     "nuxt": "^2.0.0",
     "nuxt-leaflet": "^0.0.21",
     "pg": "^8.0.2",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "@nuxtjs/vuetify": "^1.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^2.0.0",
-    "@nuxtjs/eslint-module": "^1.0.0",
-    "@nuxtjs/vuetify": "^1.0.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.10.0",
