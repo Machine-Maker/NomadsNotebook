@@ -6,6 +6,7 @@
     <v-alert type="info" :value="$fetchState.pending" transition="slide-y-transition">
       Fetching latest map data...
     </v-alert>
+    <!-- <v-card> -->
     <v-card v-if="!$fetchState.error && !$fetchState.pending">
       <v-toolbar color="secondary" text>
         <v-text-field
@@ -28,7 +29,7 @@
               <v-col v-for="item in props.items" :key="item.id" cols="12" sm="6" md="4" lg="3">
                 <v-card color="secondary lighten-1" max-width="266">
                   <v-toolbar text color="primary">
-                    <v-toolbar-title v-text="item.name" />
+                    <v-toolbar-title class="ellipsis-block" v-text="item.name" />
                     <v-spacer />
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -41,7 +42,7 @@
                   </v-toolbar>
                   <v-img class="mx-auto my-2" height="250" width="250" :src="`/maps/small_${item.type}.png`" />
                   <v-card-actions class="justify-center">
-                    <v-btn color="primary">View</v-btn>
+                    <v-btn color="primary" :to="`/maps/${item.id}`" exact nuxt>View</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -85,3 +86,12 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.ellipsis-block {
+  white-space: normal;
+  max-height: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+</style>

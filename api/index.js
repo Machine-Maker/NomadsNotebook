@@ -5,8 +5,9 @@ import { Pool } from 'pg'
 import { serve, setup } from 'swagger-ui-express'
 
 import * as swaggerConfig from '../docs/reference/API.v1.json'
-import perms from './utils/perms'
-import auth from './auth/'
+import { perms, mapTypes, regions } from './utils'
+import { auth } from './middleware'
+import authRoute from './auth/'
 import users from './users'
 import maps from './maps'
 
@@ -36,9 +37,37 @@ global.api = axios.create({
 
 global.perms = perms
 
-auth(router)
+authRoute(router)
 users(router)
 maps(router)
+
+router.get('/maptypes', [auth('USE_API')], (req, res) => {
+  const result = []
+  for (const type in mapTypes) {
+    result.push({
+      type,
+      difficulty: mapTypes[type].difficulty,
+      desc: `${mapTypes[type].name} - ${mapTypes[type].difficulty}`
+    })
+  }
+  res.status(200).send(result)
+})
+
+router.get('/permissions', [auth('USE_API')], (req, res) => {
+  const result = []
+  for (const perm in perms) {
+    result.push({ perm, value: perms[perm].b, desc: perms[perm].desc })
+  }
+  res.status(200).send(result)
+})
+
+router.get('/regions', [auth('USE_API')], (req, res) => {
+  const result = []
+  for (const region in regions) {
+    result.push({ region, fullRegion: regions[region] })
+  }
+  res.status(200).send(result)
+})
 
 router.use((err, req, res, next) => {
   console.error(err.message)

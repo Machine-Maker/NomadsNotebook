@@ -347,6 +347,102 @@
           "description": "Default Permissions"
         }
       }
+    },
+    "/maptypes": {
+      "get": {
+        "summary": "Get all map types",
+        "tags": [
+          "Misc"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapType"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maptypes",
+        "description": "Returns all map types and their difficulties",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      }
+    },
+    "/permissions": {
+      "get": {
+        "summary": "Gets all permissions",
+        "tags": [
+          "Misc"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Permission"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-permissions",
+        "description": "Returns all valid permissions",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      }
+    },
+    "/regions": {
+      "get": {
+        "summary": "Get all regions",
+        "tags": [
+          "Misc"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Region"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-regions",
+        "description": "Returns all valid regions",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -468,6 +564,83 @@
         "x-examples": {
           "Example": {
             "permissions": "000000010"
+          }
+        }
+      },
+      "Permission": {
+        "title": "Permission",
+        "type": "object",
+        "description": "A single permission",
+        "properties": {
+          "perm": {
+            "type": "string",
+            "description": "Permisison name"
+          },
+          "value": {
+            "type": "integer",
+            "description": "bit field value"
+          },
+          "desc": {
+            "type": "string",
+            "description": "Permission description"
+          }
+        },
+        "x-examples": {
+          "Example": {
+            "perm": "OWNER",
+            "value": 1,
+            "desc": "Owner of this application"
+          }
+        }
+      },
+      "MapType": {
+        "title": "MapType",
+        "type": "object",
+        "x-examples": {
+          "Example": {
+            "type": "3Canyons",
+            "difficulty": "Medium",
+            "desc": "3 Canyons - Medium"
+          }
+        },
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Map Type"
+          },
+          "difficulty": {
+            "type": "string",
+            "description": "Map Difficulty",
+            "enum": [
+              "Easy",
+              "Medium",
+              "Hard",
+              "Event"
+            ]
+          },
+          "desc": {
+            "type": "string",
+            "description": "User-friendly description"
+          }
+        }
+      },
+      "Region": {
+        "title": "Region",
+        "type": "object",
+        "properties": {
+          "region": {
+            "type": "string",
+            "description": "Region abbreviation"
+          },
+          "fullRegion": {
+            "type": "string",
+            "description": "Full name"
+          }
+        },
+        "x-examples": {
+          "Example": {
+            "region": "NAE",
+            "fullRegion": "North America - East"
           }
         }
       }

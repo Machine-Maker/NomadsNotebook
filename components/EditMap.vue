@@ -48,12 +48,23 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6">
-              <v-select v-model="formData.type" :items="types" filled label="Type" required :rules="rules"></v-select>
+              <v-select
+                v-model="formData.type"
+                :items="$store.state.mapTypes"
+                item-text="desc"
+                item-value="type"
+                filled
+                label="Type"
+                required
+                :rules="rules"
+              ></v-select>
             </v-col>
             <v-col cols="12" md="6">
               <v-select
                 v-model="formData.region"
-                :items="regions"
+                :items="$store.state.regions"
+                item-text="fullRegion"
+                item-value="region"
                 filled
                 label="Region"
                 required
@@ -98,14 +109,6 @@ export default {
         type: null
       },
       rules: [(v) => !!v || 'This field is required'],
-      regions: [
-        { text: 'North America - West', value: 'NAW' },
-        { text: 'North America - East', value: 'NAE' },
-        { text: 'Europe', value: 'EU' },
-        { text: 'South East Asia', value: 'SEA' },
-        { text: 'Oceania', value: 'OCE' },
-        { text: 'South America', value: 'SA' }
-      ],
       types: [
         { text: 'Medium - 4 Canyons', value: '4Canyons' },
         { text: 'Medium - 3 Canyons', value: '3Canyons' },

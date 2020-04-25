@@ -7,5 +7,5 @@ export default async (req, res) => {
   const results = await client.query(update, [req.body.name, req.body.region, req.body.type, req.params.map])
   client.release()
   if (!results.rowCount) res.sendStatus(204)
-  else res.status(200).send({ ...results.rows[0], difficulty: mapTypes[results.rows[0].type] })
+  else res.status(200).send({ ...results.rows[0], difficulty: mapTypes[results.rows[0].type].difficulty })
 }
