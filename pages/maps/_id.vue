@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-toolbar color="accent" elevation="0">
+    <v-toolbar color="secondary" elevation="0">
       <v-toolbar-title :class="{ 'font-italic': !map.name }">
         {{ map.name || 'Unnamed' }}
         <span :class="`info-bg difficulty ${map.difficulty.toLowerCase()}`">{{ map.difficulty }}</span>

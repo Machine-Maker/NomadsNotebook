@@ -1,7 +1,7 @@
 import { param, body } from 'express-validator'
 
 import { auth, errors } from '../middleware'
-import { regions, mapTypes } from '../utils'
+import { regions, mapTypes, formatQuery } from '../utils'
 
 import create from './create'
 import read from './read'
@@ -21,6 +21,13 @@ const typeBody = body('type', 'Map type is missing!')
 const mapBody = [nameBody, regionBody, typeBody]
 
 export default (router) => {
+  router.get('/maps', [auth('VIEW_MAP')], async (req, res) => {
+    const client = await global.pool.connect()
+    const results = await client.query('SELECT * FROM maps')
+    client.release()
+    res.status(200).send(formatQuery(results))
+  })
+
   router.post('/maps', [auth('ADD_MAP'), ...mapBody, errors], create)
 
   router.get('/maps/:map', [auth(), mapParam, errors], read)
