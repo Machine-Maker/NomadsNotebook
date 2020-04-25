@@ -1,7 +1,6 @@
 const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
-const colors = require('vuetify/es5/util/colors').default
 
 module.exports = {
   mode: 'universal',
@@ -66,21 +65,7 @@ module.exports = {
   axios: {},
   // Vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
-    theme: {
-      dark: true,
-      themes: {
-        dark: {
-          primary: colors.blue.darken2,
-          secondary: colors.grey.darken3,
-          accent: colors.amber.darken3,
-          info: colors.lightGreen.darken2,
-          warning: colors.amber.base,
-          error: colors.deepOrange.accent4,
-          success: colors.green.accent4
-        }
-      }
-    }
+    optionsPath: './plugins/vuetify.js'
   },
   // vue-router
   router: {
