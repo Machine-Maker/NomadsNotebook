@@ -61,6 +61,7 @@ module.exports = {
     'cookie-universal-nuxt',
     'nuxt-leaflet'
   ],
+  devModules: ['@nuxtjs/eslint-module', '@nuxtjs/vuetify'],
   // Axios
   axios: {},
   // Vuetify
