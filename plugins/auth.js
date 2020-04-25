@@ -20,7 +20,13 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
             store.commit('auth/login', { access_token, refresh_token })
             this.setUser()
               .then(() => resolve({ status: 'logged in ' }))
-              .catch((err) => reject(err))
+              .catch((err) => {
+                this.refreshLogin()
+                  .then(() => resolve({ status: 'refreshed token' }))
+                  .catch((err) => reject(err))
+                  .finally(() => store.commit('loading', { t: 'user', v: false }))
+                reject(err)
+              })
               .finally(() => store.commit('loading', { t: 'user', v: false }))
           } else if (!access_token && refresh_token) {
             // refresh token
@@ -123,7 +129,9 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
               store.commit('auth/setUser', data)
               resolve({ status: 'set user' })
             })
-            .catch((err) => reject(err.response.data))
+            .catch((err) => {
+              reject(err.response.data)
+            })
         }
       })
     }

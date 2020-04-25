@@ -3,6 +3,9 @@
     <h1 v-if="error.statusCode === 404">
       {{ pageNotFound }}
     </h1>
+    <h1 v-else-if="error.statusCode === 401">
+      {{ unauthorized }}
+    </h1>
     <h1 v-else>
       {{ error.message || otherError }}
     </h1>
@@ -24,6 +27,7 @@ export default {
   data() {
     return {
       pageNotFound: '404 Not Found',
+      unauthorized: '401 Unauthorized',
       otherError: 'An error occurred'
     }
   },

@@ -35,7 +35,8 @@ module.exports = {
   env: {
     baseUrl: process.env.BASE_URL,
     clientId: process.env.CLIENT_ID,
-    oauth2Url: process.env.OAUTH2_URL
+    oauth2Url: process.env.OAUTH2_URL,
+    nodeEnv: process.env.NODE_ENV
   },
   loading: {
     color: '#ff9100',
@@ -76,7 +77,7 @@ module.exports = {
           info: colors.teal.lighten1,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
-          success: colors.green.accent3
+          success: colors.green.accent4
         }
       }
     }
@@ -92,6 +93,15 @@ module.exports = {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {
+      if (ctx.isDev && ctx.isClient) {
+        config.module.rules.push({
+          enforce: 'pre',
+          test: /\.(js|vue)$/,
+          loader: 'eslint-loader',
+          exclude: /(node_modules)/
+        })
+      }
+    }
   }
 }

@@ -30,16 +30,21 @@
         <nuxt />
       </v-container>
     </v-content>
-    <v-footer fixed app>
+    <snackbar />
+    <v-footer fixed app z-index="1000">
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
 </template>
-
 <script>
 import { mapState } from 'vuex'
 
+import Snackbar from '@/components/Snackbar'
+
 export default {
+  components: {
+    snackbar: Snackbar
+  },
   data() {
     return {
       drawer: false,
@@ -56,8 +61,8 @@ export default {
         },
         {
           icon: 'mdi-map',
-          title: 'Map',
-          to: '/map'
+          title: 'Maps',
+          to: '/maps'
         }
       ],
       title: "Nomad's Notebook"
