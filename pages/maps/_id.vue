@@ -1,6 +1,16 @@
 <template>
   <v-card>
-    <v-toolbar color="secondary" elevation="0">
+    <v-toolbar color="secondary" text>
+      <v-tooltip bottom z-index="1000">
+        <template v-slot:activator="{ on: hover }">
+          <v-btn color="light-green darken-2" to="/maps" exact nuxt class="mr-3" v-on="hover">
+            <v-icon left>mdi-arrow-left</v-icon>
+            Maps
+          </v-btn>
+        </template>
+        <span>Back to all maps</span>
+      </v-tooltip>
+
       <v-toolbar-title :class="{ 'font-italic': !map.name }">
         {{ map.name || 'Unnamed' }}
         <span :class="`info-bg difficulty ${map.difficulty.toLowerCase()}`">{{ map.difficulty }}</span>

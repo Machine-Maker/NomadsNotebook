@@ -1,14 +1,19 @@
 <template>
   <v-dialog v-model="dialog" persistent max-width="700px" transition="dialog-transition" style="z-index: 2000">
-    <template v-slot:activator="{ on }">
-      <v-btn color="primary" v-on="on">
-        <v-icon left>mdi-pencil</v-icon>
-        Edit
-      </v-btn>
+    <template v-if="!externalButton" v-slot:activator="{ on: openDialog }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on: tooltip }">
+          <v-btn color="primary" v-on="{ ...openDialog, ...tooltip }">
+            <v-icon left>mdi-pencil</v-icon>
+            Edit
+          </v-btn>
+        </template>
+        <span>Edit Map</span>
+      </v-tooltip>
     </template>
     <v-card>
-      <v-toolbar color="accent">
-        <v-toolbar-title :class="{ 'font-italic': !name }">Editing {{ name || Unnamed }} </v-toolbar-title>
+      <v-toolbar color="secondary" text>
+        <v-toolbar-title :class="{ 'font-italic': !name }">Editing {{ name || 'Unnamed' }} </v-toolbar-title>
         <v-spacer />
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -79,7 +84,8 @@ export default {
     id: {
       type: Number,
       default: null
-    }
+    },
+    externalButton: Boolean
   },
   data() {
     return {
@@ -120,6 +126,9 @@ export default {
     }
   },
   methods: {
+    open() {
+      this.dialog = true
+    },
     close() {
       this.formData.name = null
       this.dialog = false

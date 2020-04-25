@@ -45,7 +45,7 @@ module.exports = {
   // Global css
   css: [],
   // Plugins
-  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }, '~/plugins/api.js'],
+  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }, '~/plugins/api.js', '~/plugins/updateTitle.js'],
   // Dev plugins
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
@@ -74,7 +74,7 @@ module.exports = {
           primary: colors.blue.darken2,
           secondary: colors.grey.darken3,
           accent: colors.amber.darken3,
-          info: colors.teal.lighten1,
+          info: colors.lightGreen.darken2,
           warning: colors.amber.base,
           error: colors.deepOrange.accent4,
           success: colors.green.accent4
