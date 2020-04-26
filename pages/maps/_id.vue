@@ -1,35 +1,43 @@
 <template>
-  <v-card>
-    <v-toolbar color="secondary" text>
-      <v-tooltip bottom z-index="1000">
-        <template v-slot:activator="{ on: hover }">
-          <v-btn color="light-green darken-2" to="/maps" exact nuxt class="mr-3" v-on="hover">
-            <v-icon left>mdi-arrow-left</v-icon>
-            Maps
-          </v-btn>
-        </template>
-        <span>Back to all maps</span>
-      </v-tooltip>
+  <div>
+    <fetch-header />
+    <v-card v-if="!$fetchState.pending">
+      <v-toolbar color="secondary" text>
+        <v-tooltip bottom z-index="1000">
+          <template v-slot:activator="{ on: hover }">
+            <v-btn color="light-green darken-2" to="/maps" exact nuxt class="mr-3" v-on="hover">
+              <v-icon left>mdi-arrow-left</v-icon>
+              Maps
+            </v-btn>
+          </template>
+          <span>Back to all maps</span>
+        </v-tooltip>
 
-      <v-toolbar-title :class="{ 'font-italic': !map.name }">
-        {{ map.name || 'Unnamed' }}
-        <span :class="`info-bg difficulty ${map.difficulty.toLowerCase()}`">{{ map.difficulty }}</span>
-        <span class="info-bg region">{{ map.region }}</span>
-      </v-toolbar-title>
-      <v-spacer />
-      <edit-map v-bind="map" />
-    </v-toolbar>
-    <div id="map-wrap" style="height: calc(100vh - 36px - 64px - 12px - 12px - 64px); width: 100%; z-index: 0">
-      <client-only>
-        <l-map ref="map" :options="options" :crs="options.crs" :center="options.center" @zoomend="zoomEnd">
-          <l-image-overlay :url="`/maps/${map.type}.png`" :bounds="bounds" />
-        </l-map>
-      </client-only>
-    </div>
-  </v-card>
+        <v-toolbar-title :class="{ 'font-italic': !map.name }">
+          {{ map.name || 'Unnamed' }}
+          <span :class="`info-bg difficulty ${map.difficulty.toLowerCase()}`">{{ map.difficulty }}</span>
+          <span class="info-bg region">{{ map.region }}</span>
+        </v-toolbar-title>
+        <v-spacer />
+        <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch">
+          <map-form v-bind="map" :parent="this" ref-name="editDialog" />
+        </data-dialog>
+      </v-toolbar>
+      <div id="map-wrap" style="height: calc(100vh - 36px - 64px - 12px - 12px - 64px); width: 100%; z-index: 0">
+        <client-only>
+          <l-map ref="map" :options="options" :crs="options.crs" :center="options.center" @zoomend="zoomEnd">
+            <l-image-overlay :url="`/maps/${map.type}.png`" :bounds="bounds" />
+          </l-map>
+        </client-only>
+      </div>
+    </v-card>
+  </div>
 </template>
 <script>
-import EditMap from '@/components/data/maps/EditMap'
+import DataDialog from '@/components/data/DataDialog'
+import MapForm from '@/components/data/maps/Form'
+import FetchHeader from '@/components/FetchHeader'
+
 const isBrowser = typeof window !== 'undefined'
 let L = null
 if (isBrowser) L = require('leaflet')
@@ -37,22 +45,23 @@ if (isBrowser) L = require('leaflet')
 export default {
   middleware: ['map'],
   components: {
-    'edit-map': EditMap
+    'data-dialog': DataDialog,
+    'map-form': MapForm,
+    'fetch-header': FetchHeader
   },
   validate({ params }) {
     return /^\d+$/.test(params.id)
   },
-  asyncData({ app, params, store, error }) {
-    return app.$api.get(`/maps/${params.id}`).then(({ data, status }) => {
-      if (status === 204) {
-        error({
-          message: 'Not a map',
-          statusCode: 404
-        })
-      } else if (status === 200) {
-        return { map: data }
-      }
-    })
+  async fetch() {
+    const { data, status } = await this.$api.get(`/maps/${this.$route.params.id}`)
+    if (status === 204) {
+      this.$nuxt.context.error({
+        message: 'Invalid map ID',
+        statusCode: 400
+      })
+    } else if (status === 200) {
+      this.map = data
+    }
   },
   data() {
     return {
@@ -73,7 +82,7 @@ export default {
         zoom: -1.5,
         zoomSnap: 0
       },
-      map: {}
+      map: null
     }
   },
   beforeMount() {

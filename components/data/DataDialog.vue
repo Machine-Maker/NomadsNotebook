@@ -4,24 +4,38 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on: tooltip }">
           <v-btn color="primary" v-on="{ ...openDialog, ...tooltip }">
-            <v-icon left>mdi-pencil</v-icon>
-            Edit
+            <v-icon v-if="action === 'Edit'" left>mdi-pencil</v-icon>
+            <v-icon v-else-if="action === 'New'" left>mdi-plus</v-icon>
+            <span v-if="action === 'Edit'">Edit</span>
+            <span v-else>Add {{ type }}</span>
           </v-btn>
         </template>
-        <span>Edit {{ type }}</span>
+        <span>{{ action }} {{ type }}</span>
       </v-tooltip>
     </template>
     <v-card>
       <v-toolbar color="secondary">
-        <v-toolbar-title :class="{ 'font-italic': !type }">Editing {{ type || 'Unamed' }}</v-toolbar-title>
+        <v-toolbar-title :class="{ 'font-italic': !type }">{{ action }} {{ type || 'Unamed' }}</v-toolbar-title>
         <v-spacer />
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn icon color="success" :disabled="!form" :loading="loading" v-on="on" @click.stop="submit">
+            <v-btn
+              v-if="action === 'Edit'"
+              icon
+              color="success"
+              :disabled="!form"
+              :loading="loading"
+              v-on="on"
+              @click.stop="submit"
+            >
               <v-icon>mdi-check</v-icon>
             </v-btn>
+            <v-btn v-else icon color="success" :disabled="!form" :loading="loading" v-on="on" @click.stop="create">
+              <v-icon>mdi-plus-circle-outline</v-icon>
+            </v-btn>
           </template>
-          <span>Submit Changes</span>
+          <span v-if="action === 'Edit'">Submit Changes</span>
+          <span v-else>Create</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -44,12 +58,13 @@
 <script>
 export default {
   props: {
+    action: {
+      type: String,
+      default: 'New',
+      validator: (value) => value === 'Edit' || value === 'New'
+    },
     type: {
       type: String,
-      default: null
-    },
-    firstInput: {
-      type: Object,
       default: null
     },
     externalButton: Boolean
@@ -65,11 +80,6 @@ export default {
     dialog(newVal, oldVal) {
       if (newVal) {
         this.$emit('reset', false)
-        if (this.firstInput) {
-          this.$nextTick(() => {
-            this.firstInput.focus()
-          }, this)
-        }
       } else this.$emit('reset', true)
     }
   },
@@ -78,13 +88,17 @@ export default {
       this.loading = true
       this.$emit('submit')
     },
+    create() {
+      this.loading = true
+      this.$emit('create')
+    },
     success(msg) {
       this.loading = false
       this.$store.commit('snackbar/success', msg)
       setTimeout(
         () => {
+          this.$emit('refresh')
           this.dialog = false
-          this.$router.go()
         },
         500,
         this
