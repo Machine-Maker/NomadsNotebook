@@ -49,6 +49,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
     }
 
     login() {
+      store.commit('loading', { t: 'user', v: true })
       const nonce = crypto.randomBytes(16).toString('base64')
       const params = {
         client_id: env.clientId,

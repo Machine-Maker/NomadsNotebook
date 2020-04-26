@@ -47,8 +47,8 @@ module.exports = {
   plugins: [
     { src: '~/plugins/auth.js', mode: 'client' },
     '~/plugins/api.js',
-    { src: '~/plugins/vuetifyConfirm.js', mode: 'client' }
-    // '~/plugins/updateTitle.js'
+    { src: '~/plugins/vuetifyConfirm.js', mode: 'client' },
+    '~/plugins/updateTitle.js'
   ],
   // Dev plugins
   buildModules: [

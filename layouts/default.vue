@@ -16,15 +16,9 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title ? `${defTitle} - ${title}` : defTitle" />
       <v-spacer />
-      <v-btn v-if="loggedIn" color="warning" class="mr-2 grey--text text--darken-3" @click="$auth.logout">
-        <v-icon left>mdi-power</v-icon>
-        Logout
-      </v-btn>
-      <v-btn color="primary" :disabled="loggedIn" :loading="uLoading" @click="login">
-        <v-icon left>mdi-account</v-icon>
-        {{ loggedIn ? $store.state.auth.user.username : 'Login' }}
-      </v-btn>
+      <account-window />
     </v-app-bar>
+    <loading-overlay :value="uLoading">Loading Account...</loading-overlay>
     <v-content>
       <v-container>
         <nuxt />
@@ -40,10 +34,14 @@
 import { mapState } from 'vuex'
 
 import Snackbar from '@/components/Snackbar'
+import AccountWindow from '@/components/AccountWindow'
+import LoadingOverlay from '@/components/LoadingOverlay'
 
 export default {
   components: {
-    snackbar: Snackbar
+    snackbar: Snackbar,
+    'account-window': AccountWindow,
+    'loading-overlay': LoadingOverlay
   },
   data() {
     return {
@@ -70,9 +68,6 @@ export default {
   },
   computed: {
     ...mapState({
-      loggedIn: (state) => state.auth.loggedIn,
-      username: (state) => state.auth.user.username,
-      avatar: (state) => state.auth.user.avatar,
       uLoading: (state) => state.loading.user,
       title: (state) => state.title
     })
@@ -82,7 +77,6 @@ export default {
   },
   methods: {
     login() {
-      this.$store.commit('loading', { t: 'user', v: true })
       this.$auth.login()
     }
   }
