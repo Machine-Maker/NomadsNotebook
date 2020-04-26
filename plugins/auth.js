@@ -36,7 +36,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
               .catch((err) => reject(err))
               .finally(() => store.commit('loading', { t: 'user', v: false }))
           } else {
-            this.logout()
+            store.commit('auth/logout')
             resolve({ status: 'invalid cookies' })
           }
         } else {
@@ -140,6 +140,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       store.commit('auth/logout')
       app.$cookies.remove(ACCESS_TOKEN)
       app.$cookies.remove(REFRESH_TOKEN)
+      redirect('/')
     }
   }
 
