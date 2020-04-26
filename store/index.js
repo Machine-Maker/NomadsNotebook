@@ -28,16 +28,20 @@ export const mutations = {
 
 export const actions = {
   async nuxtServerInit({ state, commit }, { app }) {
+    let query = ''
+    if (process.env.NODE_ENV === 'development') {
+      query = '?test=true'
+    }
     if (Array.isArray(state.regions) && !state.regions.length) {
-      const { data } = await app.$api.get('/regions')
+      const { data } = await app.$api.get(`/regions${query}`)
       commit('setRegions', data)
     }
     if (Array.isArray(state.permissions) && !state.permissions.length) {
-      const { data } = await app.$api.get('/permissions')
+      const { data } = await app.$api.get(`/permissions${query}`)
       commit('setPermissions', data)
     }
     if (Array.isArray(state.mapTypes) && !state.mapTypes.length) {
-      const { data } = await app.$api.get('/maptypes')
+      const { data } = await app.$api.get(`/maptypes${query}`)
       commit('setMapTypes', data)
     }
   }

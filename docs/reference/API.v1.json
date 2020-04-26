@@ -370,14 +370,7 @@
           }
         },
         "operationId": "get-maptypes",
-        "description": "Returns all map types and their difficulties",
-        "security": [
-          {
-            "Discord": [
-              "identify"
-            ]
-          }
-        ]
+        "description": "Returns all map types and their difficulties"
       }
     },
     "/permissions": {
@@ -402,14 +395,7 @@
           }
         },
         "operationId": "get-permissions",
-        "description": "Returns all valid permissions",
-        "security": [
-          {
-            "Discord": [
-              "identify"
-            ]
-          }
-        ]
+        "description": "Returns all valid permissions"
       }
     },
     "/regions": {
@@ -434,14 +420,7 @@
           }
         },
         "operationId": "get-regions",
-        "description": "Returns all valid regions",
-        "security": [
-          {
-            "Discord": [
-              "identify"
-            ]
-          }
-        ]
+        "description": "Returns all valid regions"
       }
     }
   },

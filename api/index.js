@@ -41,7 +41,7 @@ authRoute(router)
 users(router)
 maps(router)
 
-router.get('/maptypes', [auth('USE_API')], (req, res) => {
+router.get('/maptypes', (req, res) => {
   const result = []
   for (const type in mapTypes) {
     result.push({
@@ -53,7 +53,7 @@ router.get('/maptypes', [auth('USE_API')], (req, res) => {
   res.status(200).send(result)
 })
 
-router.get('/permissions', [auth('USE_API')], (req, res) => {
+router.get('/permissions', (req, res) => {
   const result = []
   for (const perm in perms) {
     result.push({ perm, value: perms[perm].b, desc: perms[perm].desc })
@@ -61,7 +61,7 @@ router.get('/permissions', [auth('USE_API')], (req, res) => {
   res.status(200).send(result)
 })
 
-router.get('/regions', [auth('USE_API')], (req, res) => {
+router.get('/regions', (req, res) => {
   const result = []
   for (const region in regions) {
     result.push({ region, fullRegion: regions[region] })
