@@ -96,8 +96,6 @@ export default {
 }
 </script>
 <style lang="scss">
-@import '~vuetify/src/styles/styles.sass';
-
 #map-wrap {
   padding: 0;
 }

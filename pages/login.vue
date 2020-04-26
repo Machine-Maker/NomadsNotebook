@@ -9,6 +9,7 @@ export default {
       .handleCallback(this.$route.query)
       .catch((err) => {
         console.error(err)
+        this.$auth.logout()
       })
       .finally(() => {
         this.$store.commit('loading', { t: 'user', v: false })

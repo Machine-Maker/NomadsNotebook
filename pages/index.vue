@@ -1,6 +1,6 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8 md6>
+  <v-row justify="center" align="center">
+    <v-col cols="12" sm="8" md="6">
       <div class="text-center">
         <logo />
         <vuetify-logo />
@@ -29,7 +29,7 @@
           <p>
             Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.
           </p>
-          <div class="text-xs-right">
+          <div class="text-right">
             <em><small>&mdash; John Leider</small></em>
           </div>
           <hr class="my-3" />
@@ -48,8 +48,8 @@
           </v-btn>
         </v-card-actions>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

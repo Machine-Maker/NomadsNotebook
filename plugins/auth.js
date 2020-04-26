@@ -5,12 +5,8 @@ const ACCESS_TOKEN = 'auth-access-token'
 const REFRESH_TOKEN = 'auth-refresh-token'
 
 export default ({ app, store, redirect, $axios, env }, inject) => {
-  const api = $axios.create({
-    baseURL: `${env.baseUrl}/api`
-  })
-
   class AuthService {
-    verifyAuth(login = false) {
+    verifyAuth() {
       return new Promise((resolve, reject) => {
         if (!store.state.auth.loggedIn) {
           const access_token = app.$cookies.get(ACCESS_TOKEN)
@@ -65,40 +61,21 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       }, 500)
     }
 
-    handleCallback(queryParams) {
-      return new Promise((resolve, reject) => {
-        // check state
-        if (queryParams.state !== sessionStorage.getItem('nonce')) return reject(new Error('Invalid state!'))
-        const code = queryParams.code
-        api
-          .get(`/auth/token?${stringify({ code })}`)
-          .then(({ data }) => {
-            this.setTokens(data)
-            return this.setUser()
-          })
-          .then(() => {
-            resolve({ status: 'logged in' })
-          })
-          .catch((err) => {
-            reject(err.response.data)
-          })
-      })
+    async handleCallback(queryParams) {
+      if (queryParams.state !== sessionStorage.getItem('nonce')) throw new Error('Invalid state!')
+      const code = queryParams.code
+      const { data } = await app.$api.get(`/auth/token?${stringify({ code })}`, false)
+      this.setTokens(data)
+      await this.setUser()
+      return { status: 'logged in' }
     }
 
-    refreshLogin() {
-      return new Promise((resolve, reject) => {
-        const refresh_token = app.$cookies.get(REFRESH_TOKEN)
-        api
-          .get(`/auth/refresh?${stringify({ refresh_token })}`)
-          .then(({ data }) => {
-            this.setTokens(data)
-            return this.setUser()
-          })
-          .then(() => {
-            resolve({ status: 'token refreshed' })
-          })
-          .catch((err) => reject(err.response.data))
-      })
+    async refreshLogin() {
+      const refresh_token = app.$cookies.get(REFRESH_TOKEN)
+      const { data } = await app.$api.get(`/auth/refresh?${stringify({ refresh_token })}`, false)
+      this.setTokens(data)
+      await this.setUser()
+      return { status: 'token refreshed' }
     }
 
     setTokens({ access_token, refresh_token, expires_in }) {
@@ -116,25 +93,17 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       return app.$cookies.get(ACCESS_TOKEN) || 'None'
     }
 
-    setUser() {
-      return new Promise((resolve, reject) => {
-        if (!store.state.auth.loggedIn || !store.state.auth.access_token) reject(new Error('Not logged in!'))
-        else {
-          $axios
-            .get('https://discordapp.com/api/users/@me', {
-              headers: {
-                Authorization: `Bearer ${store.state.auth.access_token}`
-              }
-            })
-            .then(({ data }) => {
-              store.commit('auth/setUser', data)
-              resolve({ status: 'set user' })
-            })
-            .catch((err) => {
-              reject(err.response.data)
-            })
-        }
-      })
+    async setUser() {
+      if (!store.state.auth.loggedIn || !store.state.auth.access_token) throw new Error('Not logged in!')
+      const { data: discordData } = await $axios.get('https://discordapp.com/api/users/@me', app.$api._getAuth())
+      store.commit('loading', { t: 'perms', v: true })
+      app.$api
+        .get(`/users/${discordData.id}`)
+        .then(({ data: userData }) => {
+          store.commit('auth/setPerms', this.computePerms(parseInt(userData.permissions, 2)))
+        })
+        .finally(() => store.commit('loading', { t: 'perms', v: false }))
+      store.commit('auth/setUser', discordData)
     }
 
     logout() {
@@ -142,6 +111,14 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       app.$cookies.remove(ACCESS_TOKEN)
       app.$cookies.remove(REFRESH_TOKEN)
       redirect('/')
+    }
+
+    computePerms(bitfield) {
+      const userPerms = []
+      for (const perm of store.state.permissions) {
+        if (bitfield & perm.value) userPerms.push(perm.perm)
+      }
+      return userPerms
     }
   }
 

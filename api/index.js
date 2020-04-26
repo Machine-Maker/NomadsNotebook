@@ -6,7 +6,6 @@ import { serve, setup } from 'swagger-ui-express'
 
 import * as swaggerConfig from '../docs/reference/API.v1.json'
 import { perms, mapTypes, regions } from './utils'
-import { auth } from './middleware'
 import authRoute from './auth/'
 import users from './users'
 import maps from './maps'

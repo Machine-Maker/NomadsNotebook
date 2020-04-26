@@ -18,7 +18,9 @@
       <v-spacer />
       <account-window />
     </v-app-bar>
-    <loading-overlay :value="uLoading">Loading Account...</loading-overlay>
+    <loading-overlay :value="uLoading">
+      Loading Account...
+    </loading-overlay>
     <v-content>
       <v-container>
         <nuxt />
@@ -46,7 +48,7 @@ export default {
   data() {
     return {
       drawer: false,
-      items: [
+      allItems: [
         {
           icon: 'mdi-apps',
           title: 'Welcome',
@@ -60,7 +62,14 @@ export default {
         {
           icon: 'mdi-map',
           title: 'Maps',
-          to: '/maps/'
+          to: '/maps/',
+          perm: 'VIEW_MAPS'
+        },
+        {
+          icon: 'mdi-account-supervisor',
+          title: 'Users',
+          to: '/users',
+          perm: 'VIEW_USERS'
         }
       ],
       defTitle: "Nomad's Notebook"
@@ -70,7 +79,10 @@ export default {
     ...mapState({
       uLoading: (state) => state.loading.user,
       title: (state) => state.title
-    })
+    }),
+    items() {
+      return this.allItems.filter((i) => (i.perm ? this.$store.getters['auth/hasPermission'](i.perm) : true))
+    }
   },
   mounted() {
     this.$auth.verifyAuth()

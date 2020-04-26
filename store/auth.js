@@ -5,9 +5,16 @@ export const state = () => ({
   user: {
     id: '',
     username: '',
-    avatar: ''
+    avatar: '',
+    permissions: []
   }
 })
+
+export const getters = {
+  hasPermission: (state) => (perm) => {
+    return state.user.permissions.includes(perm)
+  }
+}
 
 export const mutations = {
   login(state, { access_token, refresh_token }) {
@@ -20,6 +27,9 @@ export const mutations = {
     state.user.username = user.username
     state.user.avatar = user.avatar
   },
+  setPerms(state, permissions) {
+    state.user.permissions = permissions
+  },
   logout(state) {
     state.loggedIn = false
     state.access_token = null
@@ -27,7 +37,8 @@ export const mutations = {
     state.user = {
       id: '',
       username: '',
-      avatar: ''
+      avatar: '',
+      permissions: []
     }
   }
 }

@@ -1,6 +1,7 @@
 export const state = () => ({
   loading: {
-    user: false
+    user: false,
+    perms: false
   },
   title: '',
   mapTypes: [],
@@ -28,20 +29,16 @@ export const mutations = {
 
 export const actions = {
   async nuxtServerInit({ state, commit }, { app }) {
-    let query = ''
-    if (process.env.NODE_ENV === 'development') {
-      query = '?test=true'
-    }
     if (Array.isArray(state.regions) && !state.regions.length) {
-      const { data } = await app.$api.get(`/regions${query}`)
+      const { data } = await app.$api.get(`/regions`)
       commit('setRegions', data)
     }
     if (Array.isArray(state.permissions) && !state.permissions.length) {
-      const { data } = await app.$api.get(`/permissions${query}`)
+      const { data } = await app.$api.get(`/permissions`)
       commit('setPermissions', data)
     }
     if (Array.isArray(state.mapTypes) && !state.mapTypes.length) {
-      const { data } = await app.$api.get(`/maptypes${query}`)
+      const { data } = await app.$api.get(`/maptypes`)
       commit('setMapTypes', data)
     }
   }

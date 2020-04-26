@@ -10,7 +10,7 @@
           autofocus
           required
           :rules="rules"
-        ></v-text-field>
+        />
       </v-col>
       <v-col cols="12" md="6">
         <v-select
@@ -22,7 +22,7 @@
           label="Type"
           required
           :rules="rules"
-        ></v-select>
+        />
       </v-col>
       <v-col cols="12" md="6">
         <v-select
@@ -34,7 +34,7 @@
           label="Region"
           required
           :rules="rules"
-        ></v-select>
+        />
       </v-col>
     </v-row>
   </v-container>

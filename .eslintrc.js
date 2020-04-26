@@ -1,3 +1,4 @@
+// prettier-ignore
 module.exports = {
   root: true,
   env: {
@@ -8,7 +9,9 @@ module.exports = {
     parser: 'babel-eslint'
   },
   extends: [
+    'vuetify',
     '@nuxtjs',
+    'plugin:vue/recommended',
     'prettier',
     'prettier/vue',
     'plugin:prettier/recommended',
@@ -20,6 +23,20 @@ module.exports = {
     'nuxt/no-cjs-in-config': 'off',
     'no-console': 'off',
     camelcase: 'off',
-    'no-unused-vars': 'warn'
+    'no-unused-vars': 'warn',
+    'vue/max-attributes-per-line': 'off',
+    'vue/singleline-html-element-content-newline': 'off',
+    'vue/html-self-closing': [
+      'warn',
+      {
+        html: {
+          void: 'always',
+          normal: 'always',
+          component: 'always'
+        },
+        svg: 'always',
+        math: 'always'
+      }
+    ]
   }
 }

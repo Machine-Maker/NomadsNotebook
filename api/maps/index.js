@@ -21,7 +21,7 @@ const typeBody = body('type', 'Map type is missing!')
 const mapBody = [nameBody, regionBody, typeBody]
 
 export default (router) => {
-  router.get('/maps', [auth('VIEW_MAP')], async (req, res) => {
+  router.get('/maps', [auth('VIEW_MAPS')], async (req, res) => {
     const client = await global.pool.connect()
     const results = await client.query('SELECT * FROM maps')
     client.release()

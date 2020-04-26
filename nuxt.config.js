@@ -70,6 +70,7 @@ module.exports = {
   axios: {},
   // Vuetify
   vuetify: {
+    customVariables: ['~/assets/variables.scss'],
     optionsPath: './plugins/vuetify.js'
   },
   // vue-router

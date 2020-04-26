@@ -530,21 +530,21 @@
       "PermissionBody": {
         "title": "PermissionBody",
         "type": "object",
-        "properties": {
-          "permissions": {
-            "type": "string",
-            "description": "Permissions bitfield",
-            "pattern": "^(0|1){9}$"
-          }
-        },
-        "required": [
-          "permissions"
-        ],
         "x-examples": {
           "Example": {
             "permissions": "000000010"
           }
-        }
+        },
+        "properties": {
+          "permissions": {
+            "type": "string",
+            "description": "Permissions bitfield",
+            "pattern": "^(0|1){10}$"
+          }
+        },
+        "required": [
+          "permissions"
+        ]
       },
       "Permission": {
         "title": "Permission",
