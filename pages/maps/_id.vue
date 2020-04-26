@@ -29,7 +29,7 @@
   </v-card>
 </template>
 <script>
-import EditMap from '@/components/EditMap'
+import EditMap from '@/components/data/maps/EditMap'
 const isBrowser = typeof window !== 'undefined'
 let L = null
 if (isBrowser) L = require('leaflet')

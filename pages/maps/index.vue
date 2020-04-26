@@ -55,7 +55,7 @@
   </div>
 </template>
 <script>
-import EditMap from '@/components/EditMap'
+import EditMap from '@/components/data/maps/EditMap'
 
 export default {
   middleware: ['map'],

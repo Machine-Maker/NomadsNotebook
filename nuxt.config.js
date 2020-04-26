@@ -44,7 +44,11 @@ module.exports = {
   // Global css
   css: [],
   // Plugins
-  plugins: [{ src: '~/plugins/auth.js', mode: 'client' }, '~/plugins/api.js', '~/plugins/updateTitle.js'],
+  plugins: [
+    { src: '~/plugins/auth.js', mode: 'client' },
+    '~/plugins/api.js'
+    // '~/plugins/updateTitle.js'
+  ],
   // Dev plugins
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
