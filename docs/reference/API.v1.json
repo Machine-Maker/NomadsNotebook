@@ -31,6 +31,14 @@
     {
       "name": "Users",
       "description": "Endpoints relating to user management"
+    },
+    {
+      "name": "Maps",
+      "description": "Endpoints relating to map management"
+    },
+    {
+      "name": "Misc",
+      "description": "Miscellaneous endpoints"
     }
   ],
   "paths": {
@@ -195,6 +203,9 @@
           "204": {
             "description": "No Content (No user with that snowflake)"
           },
+          "401": {
+            "description": "Unauthorized"
+          },
           "422": {
             "description": "Unprocessable Entity",
             "content": {
@@ -227,6 +238,9 @@
           },
           "204": {
             "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "422": {
             "description": "Unprocessable Entity",
@@ -267,6 +281,9 @@
           },
           "204": {
             "description": "No Content (No user with that snowflake)"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "422": {
             "description": "Unprocessable Entity",
@@ -314,6 +331,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "422": {
             "description": "Unprocessable Entity",
@@ -422,6 +442,310 @@
         "operationId": "get-regions",
         "description": "Returns all valid regions"
       }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "tags": [
+          "Users"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "description": "All users",
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "get-users",
+        "description": "Gets all users",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      }
+    },
+    "/maps": {
+      "get": {
+        "summary": "Get all maps",
+        "tags": [
+          "Maps"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "description": "All maps",
+                      "items": {
+                        "$ref": "#/components/schemas/Map"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maps",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "description": "Gets all maps"
+      },
+      "post": {
+        "summary": "Create a new map",
+        "operationId": "post-maps",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Create a new map",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "MapName",
+                    "region": "NAE",
+                    "type": "3Canyons"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Map information"
+        },
+        "tags": [
+          "Maps"
+        ]
+      }
+    },
+    "/maps/{map}": {
+      "get": {
+        "summary": "Get a map",
+        "tags": [
+          "Maps"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Map"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Map"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-maps-:map",
+        "description": "Get a map",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update a map",
+        "tags": [
+          "Maps"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Map"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Map"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "put-maps-:map",
+        "description": "Update a map",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "MapName",
+                    "region": "NAE",
+                    "type": "3Canyons"
+                  }
+                }
+              }
+            }
+          },
+          "description": "Updated map information"
+        }
+      },
+      "delete": {
+        "summary": "Delete a map",
+        "tags": [
+          "Maps"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "204": {
+            "description": "No Map"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidateError"
+                }
+              }
+            }
+          }
+        },
+        "operationId": "delete-maps-:map",
+        "description": "Delete a map",
+        "security": [
+          {
+            "Discord": [
+              "identify"
+            ]
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/MapParam"
+        }
+      ]
     }
   },
   "components": {
@@ -504,6 +828,16 @@
       "User": {
         "title": "User",
         "type": "object",
+        "description": "User object",
+        "x-tags": [
+          "Users"
+        ],
+        "x-examples": {
+          "Example": {
+            "snowflake": "123456789123456789",
+            "permissions": "110010010"
+          }
+        },
         "properties": {
           "snowflake": {
             "type": "string",
@@ -514,16 +848,18 @@
             "minLength": 11,
             "maxLength": 11,
             "description": "Permissions bitfield"
-          }
-        },
-        "description": "User object",
-        "x-tags": [
-          "Users"
-        ],
-        "x-examples": {
-          "Example": {
-            "snowflake": "123456789123456789",
-            "permissions": "110010010"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "Avatar hash"
+          },
+          "username": {
+            "type": "string",
+            "description": "Discord username"
+          },
+          "discriminator": {
+            "type": "string",
+            "description": "Discord discriminator"
           }
         }
       },
@@ -622,6 +958,37 @@
             "fullRegion": "North America - East"
           }
         }
+      },
+      "Map": {
+        "title": "Map",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Map ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Map name"
+          },
+          "region": {
+            "type": "string",
+            "description": "One of the regions"
+          },
+          "type": {
+            "type": "string",
+            "description": "One of the MapTypes"
+          }
+        },
+        "x-examples": {
+          "Example": {
+            "id": 11,
+            "name": "New Map",
+            "region": "EU",
+            "type": "Volcano"
+          }
+        },
+        "description": "Represents a map"
       }
     },
     "parameters": {
@@ -633,6 +1000,15 @@
         "schema": {
           "type": "string"
         }
+      },
+      "MapParam": {
+        "name": "map",
+        "in": "path",
+        "description": "Map ID",
+        "schema": {
+          "type": "integer"
+        },
+        "required": true
       }
     },
     "securitySchemes": {
