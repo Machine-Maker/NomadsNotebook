@@ -9,7 +9,7 @@
           label="Name"
           autofocus
           required
-          :rules="rules"
+          :rules="[rules.required]"
         />
       </v-col>
       <v-col cols="12" md="6">
@@ -21,7 +21,7 @@
           filled
           label="Type"
           required
-          :rules="rules"
+          :rules="[rules.required]"
         />
       </v-col>
       <v-col cols="12" md="6">
@@ -33,14 +33,17 @@
           filled
           label="Region"
           required
-          :rules="rules"
+          :rules="[rules.required]"
         />
       </v-col>
     </v-row>
   </v-container>
 </template>
 <script>
+import formMixin from '@/components/mixins/form'
+
 export default {
+  mixins: [formMixin],
   props: {
     name: {
       type: String,
@@ -57,15 +60,6 @@ export default {
     id: {
       type: Number,
       default: null
-    },
-    parent: {
-      type: Object,
-      default: null
-    },
-    refName: {
-      type: String,
-      default: null,
-      validate: (v) => !!v
     }
   },
   data() {
@@ -74,15 +68,8 @@ export default {
         name: null,
         region: null,
         type: null
-      },
-      rules: [(v) => !!v || 'This field is required']
+      }
     }
-  },
-  mounted() {
-    this.parent.$refs[this.refName].$on('submit', this.submit)
-    this.parent.$refs[this.refName].$on('reset', this.reset)
-    this.parent.$refs[this.refName].$on('create', this.create)
-    this.reset(false)
   },
   methods: {
     create() {
@@ -109,10 +96,6 @@ export default {
         this.formData.region = toNull ? null : this.region
         if (this.$refs.nameInput) this.$refs.nameInput.focus()
       }, this)
-    },
-    _onError({ response: { data, status } }) {
-      if (status === 404) this.parent.$refs[this.refName].error(new Error('404 Not Found'), '404 Not Found')
-      else this.parent.$refs[this.refName].error(data.err || data, `${data.type}: ${data.msg}`)
     }
   }
 }

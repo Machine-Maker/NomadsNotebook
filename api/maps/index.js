@@ -25,7 +25,7 @@ export default (router) => {
     const client = await global.pool.connect()
     const results = await client.query('SELECT * FROM maps')
     client.release()
-    res.status(200).send(formatQuery(results))
+    res.status(200).send(formatQuery(results, []))
   })
 
   router.post('/maps', [auth('ADD_MAP'), ...mapBody, errors], create)

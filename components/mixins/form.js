@@ -8,17 +8,21 @@ const mixin = {
       type: String,
       default: null,
       validate: (v) => !!v
-    },
-    methods: {
-      _onError({ response: { data, status } }) {
-        if (status === 404) this.parent.$refs[this.refName].error(new Error('404 Not Found'), '404 Not Found')
-        else this.parent.$refs[this.refName].error(data.err || data, `${data.type}: ${data.msg}`)
-      }
+    }
+  },
+  methods: {
+    _onError({ response: { data, status } }) {
+      if (status === 404) this.parentRef.error(new Error('404 Not Found'), 'Endpoint Not Found')
+      else if (status === 401) this.parentRef.error(new Error('401 Unauthorized'), 'Unauthorized')
+      else this.parentRef.error(data.err || data, `${data.type}: ${data.msg}`)
     }
   },
   data() {
     return {
-      parentRef: null
+      parentRef: null,
+      rules: {
+        required: (v) => !!v || 'This field is required'
+      }
     }
   },
   mounted() {

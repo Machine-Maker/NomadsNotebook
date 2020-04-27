@@ -80,9 +80,11 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
 
     setTokens({ access_token, refresh_token, expires_in }) {
       app.$cookies.set(ACCESS_TOKEN, access_token, {
+        path: '/',
         maxAge: expires_in
       })
       app.$cookies.set(REFRESH_TOKEN, refresh_token, {
+        path: '/',
         maxAge: expires_in * 52
       })
       store.commit('auth/login', { access_token, refresh_token })
@@ -98,12 +100,20 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
       const { data: discordData } = await $axios.get('https://discordapp.com/api/users/@me', app.$api._getAuth())
       store.commit('loading', { t: 'perms', v: true })
       app.$api
-        .get(`/users/${discordData.id}`)
+        .get(`/@me`)
         .then(({ data: userData }) => {
           store.commit('auth/setPerms', this.computePerms(parseInt(userData.permissions, 2)))
         })
         .finally(() => store.commit('loading', { t: 'perms', v: false }))
       store.commit('auth/setUser', discordData)
+    }
+
+    async refreshPerms() {
+      if (!store.state.auth.loggedIn || !store.state.auth.access_token) throw new Error('Not logged in!')
+      store.commit('loading', { t: 'perms', v: true })
+      const { data } = await app.$api.get(`/@me`)
+      store.commit('auth/setPerms', this.computePerms(parseInt(data.permissions, 2)))
+      store.commit('loading', { t: 'perms', v: false })
     }
 
     logout() {

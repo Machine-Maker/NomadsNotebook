@@ -19,7 +19,7 @@
           <span class="info-bg region">{{ map.region }}</span>
         </v-toolbar-title>
         <v-spacer />
-        <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch">
+        <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch()">
           <map-form v-bind="map" :parent="this" ref-name="editDialog" />
         </data-dialog>
       </v-toolbar>

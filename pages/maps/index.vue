@@ -1,6 +1,6 @@
 <template>
   <div>
-    <fetch-header />
+    <fetch-header type="map" />
     <v-card v-if="!$fetchState.error && !$fetchState.pending">
       <v-toolbar color="secondary" text>
         <v-text-field
@@ -11,7 +11,13 @@
           prepend-inner-icon="mdi-magnify"
           label="Search Maps"
         />
-        <data-dialog ref="newDialog" action="New" type="Map" @refresh="$fetch()">
+        <data-dialog
+          v-if="$store.state.auth.loggedIn && hasPermission('ADD_MAP')"
+          ref="newDialog"
+          action="New"
+          type="Map"
+          @refresh="$fetch()"
+        >
           <map-form :parent="this" ref-name="newDialog" />
         </data-dialog>
         <v-tooltip bottom>
@@ -27,31 +33,34 @@
         <v-data-iterator :items="maps">
           <template v-slot:default="props">
             <v-row justify="center">
-              <v-col v-for="item in props.items" :key="item.id" cols="12" sm="6" md="4" lg="3">
-                <v-card color="secondary lighten-1" max-width="266">
+              <v-col v-for="item in props.items" :key="item.id" cols="12" xl="2" lg="3" md="4" sm="6">
+                <v-card color="secondary lighten-1 pa-1">
                   <v-toolbar text color="primary">
                     <v-toolbar-title class="ellipsis-block" v-text="item.name" />
                     <v-spacer />
-                    <v-tooltip bottom>
+                    <v-tooltip v-if="$store.state.auth.loggedIn && hasPermission('DELETE_MAP')" bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn small text icon color="error" v-on="on" @click.stop="del(item)">
+                        <v-btn small icon class="error mr-n1" v-on="on" @click.stop="del(item)">
                           <v-icon>mdi-delete-forever</v-icon>
                         </v-btn>
                       </template>
                       <span>Delete</span>
                     </v-tooltip>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-btn small text icon color="accent lighten-2" v-on="on" @click="edit(item)">
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Edit</span>
-                    </v-tooltip>
                   </v-toolbar>
-                  <v-img class="mx-auto my-2" height="250" width="250" :src="`/maps/small_${item.type}.png`" />
-                  <v-card-actions class="justify-center">
-                    <v-btn color="primary" :to="`/maps/${item.id}`" exact nuxt>View</v-btn>
+                  <v-img class="mx-auto" :src="`/maps/small_${item.type}.png`" />
+                  <v-card-actions class="justify-space-around">
+                    <v-btn color="primary" :to="`/maps/${item.id}`" exact nuxt>
+                      <v-icon left>mdi-card-search</v-icon>
+                      View
+                    </v-btn>
+                    <v-btn
+                      v-if="$store.state.auth.loggedIn && hasPermission('EDIT_MAP')"
+                      color="accent lighten-1"
+                      @click="edit(item)"
+                    >
+                      <v-icon left>mdi-pencil</v-icon>
+                      Edit
+                    </v-btn>
                   </v-card-actions>
                 </v-card>
               </v-col>
@@ -66,6 +75,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 import DataDialog from '@/components/data/DataDialog'
 import MapForm from '@/components/data/maps/Form'
 import FetchHeader from '@/components/FetchHeader'
@@ -88,6 +99,11 @@ export default {
       selectedMap: null
     }
   },
+  computed: {
+    ...mapGetters({
+      hasPermission: 'auth/hasPermission'
+    })
+  },
   methods: {
     edit(map) {
       this.selectedMap = map
@@ -98,19 +114,21 @@ export default {
       this.$confirm(`Do you really want to delete "${map.name}"?`, {
         buttonTrueText: 'Delete',
         buttonFalseText: 'Cancel'
-      })
-        .then((value) => {
-          if (value) {
-            this.$api.delete(`/maps/${map.id}`).then(({ status }) => {
+      }).then((value) => {
+        if (value) {
+          this.$api
+            .delete(`/maps/${map.id}`)
+            .then(({ status }) => {
               if (status === 204) console.log(`No map found with ID: ${map.id}`)
               this.$refs.newDialog.success(`Successfully deleted ${map.name}`)
             })
-          }
-        })
-        .catch(({ response: { data, status } }) => {
-          if (status === 404) this.parent.$refs[this.refName].error(new Error('404 Not Found'), '404 Not Found')
-          else this.parent.$refs[this.refName].error(data.err || data, `${data.type}: ${data.msg}`)
-        })
+            .catch(({ response: { data, status } }) => {
+              if (status === 404) this.$refs.editDialog.error(new Error('404 Not Found'), '404 Not Found')
+              else if (status === 401) this.$refs.editDialog.error(new Error('401 Unauthorized'), 'Unauthorized')
+              else this.parent.$refs.editDialog.error(data.err || data, `${data.type}: ${data.msg}`)
+            })
+        }
+      })
     },
     refresh() {
       this.$fetch()
@@ -123,15 +141,6 @@ export default {
   }
 }
 </script>
-<style lang="scss">
-.ellipsis-block {
-  white-space: normal;
-  max-height: 100%;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-</style>
 <style lang="scss" scoped>
 .v-btn--icon.v-size--small {
   height: 36px;

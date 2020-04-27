@@ -32,8 +32,12 @@ export default ({ app, env, store }, inject) => {
     }
 
     _format(url) {
-      if (!url.includes('?')) return url
+      if (!url.includes('?')) {
+        if (url.endsWith('refresh') || url.endsWith('token')) return url
+        return env.nodeEnv === 'development' ? url + '?test=true' : url
+      }
       const host = url.split('?')[0]
+      if (host.endsWith('refresh') || host.endsWith('token')) return url
       const string = url.split('?')[1]
       const query = parse(string)
       if (query.test !== undefined) return url

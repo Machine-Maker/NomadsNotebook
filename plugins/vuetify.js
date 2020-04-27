@@ -2,6 +2,9 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   theme: {
+    options: {
+      customProperties: true
+    },
     dark: true,
     themes: {
       dark: {

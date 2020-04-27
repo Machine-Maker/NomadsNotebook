@@ -10,7 +10,7 @@ export default (router) => {
     const client = await global.pool.connect()
     const results = await client.query('SELECT * FROM users')
     client.release()
-    res.status(200).send(formatQuery(results))
+    res.status(200).send(formatQuery(results, []))
   })
 
   router.get('/users/:user', [auth('VIEW_USERS'), ...userParam, errors], read)

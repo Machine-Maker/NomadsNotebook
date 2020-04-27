@@ -68,6 +68,29 @@ router.get('/regions', (req, res) => {
   res.status(200).send(result)
 })
 
+router.get('/@me', (req, res, next) => {
+  if (!req.get('Authorization')) return req.status(400).send('No Authorization header found')
+  axios
+    .get('https://discordapp.com/api/users/@me', {
+      headers: {
+        Authorization: req.get('Authorization')
+      }
+    })
+    .then(async ({ data }) => {
+      try {
+        const client = await global.pool.connect()
+        const results = await client.query('SELECT * FROM users WHERE snowflake=$1', [data.id])
+        res.status(200).send(results.rows[0])
+        client.release()
+      } catch (err) {
+        next(err)
+      }
+    })
+    .catch(({ response: { status, data } }) => {
+      res.status(status).send(data)
+    })
+})
+
 router.use((err, req, res, next) => {
   console.error(err.message)
   if (process.env.NODE_ENV === 'development') console.error(err.stack)

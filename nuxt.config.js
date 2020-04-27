@@ -42,7 +42,7 @@ module.exports = {
     height: '3px'
   },
   // Global css
-  css: [],
+  css: ['@/assets/scss/main.scss'],
   // Plugins
   plugins: [
     { src: '~/plugins/auth.js', mode: 'client' },
@@ -70,7 +70,7 @@ module.exports = {
   axios: {},
   // Vuetify
   vuetify: {
-    customVariables: ['~/assets/variables.scss'],
+    customVariables: ['~/assets/scss/variables.scss'],
     optionsPath: './plugins/vuetify.js'
   },
   // vue-router

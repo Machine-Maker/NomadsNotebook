@@ -1,0 +1,7 @@
+.ellipsis-block {
+  white-space: normal !important;
+  max-height: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
