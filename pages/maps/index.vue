@@ -3,14 +3,22 @@
     <fetch-header type="map" />
     <v-card v-if="!$fetchState.error && !$fetchState.pending">
       <v-toolbar color="secondary" text>
-        <v-text-field
-          v-model="search"
-          class="mr-2"
-          clearable
-          hide-details
-          prepend-inner-icon="mdi-magnify"
-          label="Search Maps"
-        />
+        <v-col :cols="$vuetify.breakpoint.xsOnly ? '9' : '5'">
+          <v-text-field v-model="search" clearable hide-details prepend-inner-icon="mdi-magnify" label="Search Maps" />
+        </v-col>
+        <v-col cols="5">
+          <v-select
+            v-if="!$vuetify.breakpoint.xsOnly"
+            v-model="mapFilter"
+            hide-details
+            clearable
+            :items="$store.state.mapTypes"
+            item-text="desc"
+            item-value="type"
+            label="Map Type"
+            prepend-icon="mdi-filter"
+          />
+        </v-col>
         <data-dialog
           v-if="$store.state.auth.loggedIn && hasPermission('ADD_MAP')"
           ref="newDialog"
@@ -22,7 +30,7 @@
         </data-dialog>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn icon small fab elevation="4" class="info ml-2 mr-n1" v-on="on" @click.stop="$fetch()">
+            <v-btn icon small fab elevation="4" class="info ml-2" v-on="on" @click.stop="$fetch()">
               <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </template>
@@ -30,7 +38,7 @@
         </v-tooltip>
       </v-toolbar>
       <v-container>
-        <v-data-iterator :items="maps">
+        <v-data-iterator :items="maps.filter((m) => (mapFilter ? m.type === mapFilter : true))" :search="search">
           <template v-slot:default="props">
             <v-row justify="center">
               <v-col v-for="item in props.items" :key="item.id" cols="12" xl="2" lg="3" md="4" sm="6">
@@ -96,7 +104,8 @@ export default {
     return {
       maps: [],
       search: '',
-      selectedMap: null
+      selectedMap: null,
+      mapFilter: ''
     }
   },
   computed: {

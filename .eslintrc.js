@@ -37,6 +37,7 @@ module.exports = {
         svg: 'always',
         math: 'always'
       }
-    ]
+    ],
+    'vue/no-unused-components': 'warn'
   }
 }

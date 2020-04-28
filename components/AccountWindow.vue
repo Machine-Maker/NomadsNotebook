@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div style="z-index: 2000">
     <client-only>
-      <v-dialog v-if="loggedIn" v-model="dialog" max-width="300px" overlay-opacity="0.6">
+      <v-dialog v-if="loggedIn" v-model="dialog" max-width="300px" overlay-opacity="0.6" style="z-index: 2000">
         <template v-slot:activator="{ on: openDialog }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">

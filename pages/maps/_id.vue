@@ -1,6 +1,7 @@
 <template>
   <div>
-    <fetch-header />
+    <fetch-header type="map" />
+
     <v-card v-if="!$fetchState.pending">
       <v-toolbar color="secondary" text>
         <v-tooltip bottom z-index="1000">
@@ -19,23 +20,45 @@
           <span class="info-bg region">{{ map.region }}</span>
         </v-toolbar-title>
         <v-spacer />
-        <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch()">
-          <map-form v-bind="map" :parent="this" ref-name="editDialog" />
-        </data-dialog>
-      </v-toolbar>
-      <div id="map-wrap" style="height: calc(100vh - 36px - 64px - 12px - 12px - 64px); width: 100%; z-index: 0">
+        <v-btn :color="marker.visible ? 'error' : 'success'" class="mr-2" @click="marker.visible = !marker.visible">
+          <v-icon left v-text="marker.visible ? 'mdi-cancel' : 'mdi-plus'" />
+          {{ marker.visible ? 'Cancel' : 'Add Location' }}
+        </v-btn>
         <client-only>
-          <l-map ref="map" :options="options" :crs="options.crs" :center="options.center" @zoomend="zoomEnd">
-            <l-image-overlay :url="`/maps/${map.type}.png`" :bounds="bounds" />
-          </l-map>
+          <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch()">
+            <map-form v-bind="map" :parent="this" ref-name="editDialog" />
+          </data-dialog>
         </client-only>
-      </div>
+      </v-toolbar>
+
+      <client-only>
+        <div id="map-wrap" style="height: calc(100vh - 36px - 64px - 12px - 12px - 64px); width: 100%; z-index: 0">
+          <l-map
+            ref="map"
+            :options="options"
+            :crs="options.crs"
+            :center="options.center"
+            @zoomend="zoomEnd"
+            @click="click"
+          >
+            <l-image-overlay :url="`/maps/${map.type}.png`" :bounds="bounds" />
+            <l-marker ref="clickedMarker" :lat-lng="marker.latLng" :visible="marker.visible" :draggable="true">
+              <l-popup>
+                <data-dialog action="New" type="Location" :tabs="['Quality', 'POI']" @refresh="$fetch()">
+                  <location-form />
+                </data-dialog>
+              </l-popup>
+            </l-marker>
+          </l-map>
+        </div>
+      </client-only>
     </v-card>
   </div>
 </template>
 <script>
 import DataDialog from '@/components/data/DataDialog'
 import MapForm from '@/components/data/maps/Form'
+import LocationForm from '@/components/data/locations/Form'
 import FetchHeader from '@/components/FetchHeader'
 
 const isBrowser = typeof window !== 'undefined'
@@ -47,6 +70,7 @@ export default {
   components: {
     'data-dialog': DataDialog,
     'map-form': MapForm,
+    'location-form': LocationForm,
     'fetch-header': FetchHeader
   },
   validate({ params }) {
@@ -82,7 +106,18 @@ export default {
         zoom: -1.5,
         zoomSnap: 0
       },
-      map: null
+      map: null,
+      marker: {
+        latLng: [0, 0],
+        visible: false
+      }
+    }
+  },
+  watch: {
+    'marker.visible'(val, oldVal) {
+      if (val) {
+        this.marker.latLng = this.$refs.map.mapObject.getCenter()
+      }
     }
   },
   beforeMount() {
@@ -91,6 +126,13 @@ export default {
   methods: {
     zoomEnd(event) {
       console.log(`Zoom: ${event.target._zoom}`)
+    },
+    click(event) {
+      if (this.marker.visible) {
+        this.marker.latLng = event.latlng
+      }
+      // console.log(event)
+      // console.log(this.$refs.map)
     }
   }
 }
