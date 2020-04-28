@@ -6,7 +6,8 @@ export const state = () => ({
   title: '',
   mapTypes: [],
   regions: [],
-  permissions: []
+  permissions: [],
+  materials: []
 })
 
 export const mutations = {
@@ -24,6 +25,9 @@ export const mutations = {
   },
   setMapTypes(state, types) {
     state.mapTypes = types
+  },
+  setMaterials(state, materials) {
+    state.materials = materials
   }
 }
 
@@ -40,6 +44,10 @@ export const actions = {
     if (Array.isArray(state.mapTypes) && !state.mapTypes.length) {
       const { data } = await app.$api.get(`/maptypes`)
       commit('setMapTypes', data)
+    }
+    if (Array.isArray(state.materials) && !state.materials.length) {
+      const { data } = await app.$api.get('/materials')
+      commit('setMaterials', data)
     }
   }
 }

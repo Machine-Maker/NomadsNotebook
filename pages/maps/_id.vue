@@ -45,7 +45,9 @@
             <l-marker ref="clickedMarker" :lat-lng="marker.latLng" :visible="marker.visible" :draggable="true">
               <l-popup>
                 <data-dialog action="New" type="Location" :tabs="['Quality', 'POI']" @refresh="$fetch()">
-                  <location-form />
+                  <template v-slot:default="props">
+                    <location-form v-bind="props" />
+                  </template>
                 </data-dialog>
               </l-popup>
             </l-marker>

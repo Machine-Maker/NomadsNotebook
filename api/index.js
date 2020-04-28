@@ -5,7 +5,7 @@ import { Pool } from 'pg'
 import { serve, setup } from 'swagger-ui-express'
 
 import * as swaggerConfig from '../docs/reference/API.v1.json'
-import { perms, mapTypes, regions } from './utils'
+import { perms, mapTypes, regions, materials } from './utils'
 import authRoute from './auth/'
 import users from './users'
 import maps from './maps'
@@ -64,6 +64,14 @@ router.get('/regions', (req, res) => {
   const result = []
   for (const region in regions) {
     result.push({ region, fullRegion: regions[region] })
+  }
+  res.status(200).send(result)
+})
+
+router.get('/materials', (req, res) => {
+  const result = []
+  for (const mat in materials) {
+    result.push({ name: mat, desc: materials[mat] })
   }
   res.status(200).send(result)
 })
