@@ -9,6 +9,7 @@ import { perms, mapTypes, regions, materials } from './utils'
 import authRoute from './auth/'
 import users from './users'
 import maps from './maps'
+import locations from './locations'
 
 const router = Router()
 
@@ -39,6 +40,7 @@ global.perms = perms
 authRoute(router)
 users(router)
 maps(router)
+locations(router)
 
 router.get('/maptypes', (req, res) => {
   const result = []

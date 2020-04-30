@@ -38,6 +38,7 @@ module.exports = {
         math: 'always'
       }
     ],
-    'vue/no-unused-components': 'warn'
+    'vue/no-unused-components': 'warn',
+    'vue/prop-name-casing': 'off'
   }
 }

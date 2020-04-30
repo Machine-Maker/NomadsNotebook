@@ -66,7 +66,7 @@
         </v-btn>
       </v-toolbar>
       <v-form ref="form" v-model="form">
-        <slot :tab="tabSelect" />
+        <slot :tab="tabSelect" :parent-direct="this" />
       </v-form>
     </v-card>
   </v-dialog>

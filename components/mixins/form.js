@@ -4,6 +4,10 @@ const mixin = {
       type: Object,
       default: null
     },
+    parentDirect: {
+      type: Object,
+      default: null
+    },
     refName: {
       type: String,
       default: null,
@@ -21,12 +25,14 @@ const mixin = {
     return {
       parentRef: null,
       rules: {
-        required: (v) => !!v || 'This field is required'
+        required: (v) => !!v || 'This field is required',
+        number: (v) => !isNaN(v) || 'Must be a number',
+        quality: (v) => /^\d+\+?$/.test(v) || 'Not a valid quality'
       }
     }
   },
   mounted() {
-    this.parentRef = this.parent.$refs[this.refName]
+    this.parentRef = this.parent ? this.parent.$refs[this.refName] : this.parentDirect
     this.parentRef.$on('submit', this.submit)
     this.parentRef.$on('reset', this.reset)
     this.parentRef.$on('create', this.create)

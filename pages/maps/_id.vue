@@ -42,13 +42,33 @@
             @click="click"
           >
             <l-image-overlay :url="`/maps/${map.type}.png`" :bounds="bounds" />
-            <l-marker ref="clickedMarker" :lat-lng="marker.latLng" :visible="marker.visible" :draggable="true">
+            <l-marker ref="clickedMarker" :lat-lng.sync="marker.latLng" :visible="marker.visible" :draggable="true">
               <l-popup>
-                <data-dialog action="New" type="Location" :tabs="['Quality', 'POI']" @refresh="$fetch()">
+                <data-dialog
+                  ref="newLocation"
+                  action="New"
+                  type="Location"
+                  :tabs="['Quality', 'POI']"
+                  @refresh="$fetch()"
+                >
                   <template v-slot:default="props">
-                    <location-form v-bind="props" />
+                    <location-form
+                      v-bind="{ ...props, map_id: map.id }"
+                      ref-name="newLocation"
+                      :location="$refs.clickedMarker.latLng"
+                    />
                   </template>
                 </data-dialog>
+              </l-popup>
+            </l-marker>
+            <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location">
+              <l-popup class="location-info">
+                <v-card width="250">
+                  <v-card-text>
+                    Location: {{ location.material }}<br />
+                    Max Quality: {{ location.quality }}
+                  </v-card-text>
+                </v-card>
               </l-popup>
             </l-marker>
           </l-map>
@@ -78,7 +98,9 @@ export default {
   validate({ params }) {
     return /^\d+$/.test(params.id)
   },
+  fetchOnServer: false,
   async fetch() {
+    this.marker.visible = false
     const { data, status } = await this.$api.get(`/maps/${this.$route.params.id}`)
     if (status === 204) {
       this.$nuxt.context.error({
@@ -87,6 +109,16 @@ export default {
       })
     } else if (status === 200) {
       this.map = data
+    }
+    this.locations = []
+    const {
+      data: { locations }
+    } = await this.$api.get(`/maplocations/${this.$route.params.id}`)
+    for (const loc of locations) {
+      this.locations.push({
+        ...loc,
+        location: L.latLng(loc.location.split(', ')[0], loc.location.split(', ')[1])
+      })
     }
   },
   data() {
@@ -109,6 +141,7 @@ export default {
         zoomSnap: 0
       },
       map: null,
+      locations: [],
       marker: {
         latLng: [0, 0],
         visible: false
@@ -133,8 +166,6 @@ export default {
       if (this.marker.visible) {
         this.marker.latLng = event.latlng
       }
-      // console.log(event)
-      // console.log(this.$refs.map)
     }
   }
 }
@@ -158,6 +189,22 @@ export default {
 
   &.medium {
     color: map-get($orange, lighten-1);
+  }
+}
+
+.leaflet-popup {
+  .leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+
+    .leaflet-popup-content {
+      margin: 0;
+    }
+  }
+
+  .leaflet-popup-close-button {
+    display: none;
   }
 }
 </style>
