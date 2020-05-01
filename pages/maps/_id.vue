@@ -61,9 +61,25 @@
                 </data-dialog>
               </l-popup>
             </l-marker>
-            <l-marker v-for="location in locations" :key="location.id" :lat-lng="location.location">
+            <l-marker
+              v-for="location in locations"
+              :ref="`location-${location.id}`"
+              :key="location.id"
+              :lat-lng="location.location"
+            >
               <l-popup class="location-info">
-                <v-card width="250">
+                <v-card width="200">
+                  <v-btn
+                    absolute
+                    top
+                    right
+                    fab
+                    x-small
+                    color="error"
+                    @click.stop="$refs[`location-${location.id}`][0].mapObject.closePopup()"
+                  >
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
                   <v-card-text>
                     Location: {{ location.material }}<br />
                     Max Quality: {{ location.quality }}
