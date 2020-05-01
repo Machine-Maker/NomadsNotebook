@@ -3,8 +3,8 @@
     <fetch-header type="map" />
 
     <v-card v-if="!$fetchState.pending">
-      <v-toolbar color="secondary" text>
-        <v-tooltip bottom z-index="1000">
+      <v-toolbar color="secondary" text class="justify-end">
+        <v-tooltip bottom>
           <template v-slot:activator="{ on: hover }">
             <v-btn color="light-green darken-2" to="/maps" exact nuxt class="mr-3" v-on="hover">
               <v-icon left>mdi-arrow-left</v-icon>
@@ -13,22 +13,39 @@
           </template>
           <span>Back to all maps</span>
         </v-tooltip>
-
         <v-toolbar-title :class="{ 'font-italic': !map.name }">
           {{ map.name || 'Unnamed' }}
           <span :class="`info-bg difficulty ${map.difficulty.toLowerCase()}`">{{ map.difficulty }}</span>
           <span class="info-bg region">{{ map.region }}</span>
         </v-toolbar-title>
         <v-spacer />
-        <v-btn :color="marker.visible ? 'error' : 'success'" class="mr-2" @click="marker.visible = !marker.visible">
-          <v-icon left v-text="marker.visible ? 'mdi-cancel' : 'mdi-plus'" />
-          {{ marker.visible ? 'Cancel' : 'Add Location' }}
-        </v-btn>
-        <client-only>
-          <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch()">
-            <map-form v-bind="map" :parent="this" ref-name="editDialog" />
-          </data-dialog>
-        </client-only>
+        <v-col cols="3">
+          <v-select
+            v-model="locationFilter"
+            label="Material Filter"
+            prepend-icon="mdi-filter"
+            hide-details
+            class="mr-2"
+            max-width="150px"
+            :items="$store.state.materials"
+            item-text="name"
+            item-value="name"
+            clearable
+          />
+        </v-col>
+        <v-col class="shrink">
+          <v-btn :color="marker.visible ? 'error' : 'success'" class="mr-2" @click="marker.visible = !marker.visible">
+            <v-icon left v-text="marker.visible ? 'mdi-cancel' : 'mdi-plus'" />
+            {{ marker.visible ? 'Cancel' : 'Add Location' }}
+          </v-btn>
+        </v-col>
+        <v-col class="shrink">
+          <client-only>
+            <data-dialog ref="editDialog" action="Edit" type="Map" @refresh="$fetch()">
+              <map-form v-bind="map" :parent="this" ref-name="editDialog" />
+            </data-dialog>
+          </client-only>
+        </v-col>
       </v-toolbar>
 
       <client-only>
@@ -38,6 +55,7 @@
             :options="options"
             :crs="options.crs"
             :center="options.center"
+            style="z-index: 0"
             @zoomend="zoomEnd"
             @click="click"
           >
@@ -62,7 +80,7 @@
               </l-popup>
             </l-marker>
             <l-marker
-              v-for="location in locations"
+              v-for="location in locationsFiltered"
               :ref="`location-${location.id}`"
               :key="location.id"
               :lat-lng="location.location"
@@ -158,10 +176,16 @@ export default {
       },
       map: null,
       locations: [],
+      locationFilter: null,
       marker: {
         latLng: [0, 0],
         visible: false
       }
+    }
+  },
+  computed: {
+    locationsFiltered() {
+      return this.locations.filter((l) => (this.locationFilter ? l.material === this.locationFilter : true))
     }
   },
   watch: {
