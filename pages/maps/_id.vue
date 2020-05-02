@@ -25,7 +25,6 @@
             label="Material Filter"
             prepend-icon="mdi-filter"
             hide-details
-            class="mr-2"
             max-width="150px"
             :items="$store.state.materials"
             item-text="name"
@@ -34,7 +33,7 @@
           />
         </v-col>
         <v-col class="shrink">
-          <v-btn :color="marker.visible ? 'error' : 'success'" class="mr-2" @click="marker.visible = !marker.visible">
+          <v-btn :color="marker.visible ? 'error' : 'success'" @click="marker.visible = !marker.visible">
             <v-icon left v-text="marker.visible ? 'mdi-cancel' : 'mdi-plus'" />
             {{ marker.visible ? 'Cancel' : 'Add Location' }}
           </v-btn>
@@ -45,6 +44,9 @@
               <map-form v-bind="map" :parent="this" ref-name="editDialog" />
             </data-dialog>
           </client-only>
+        </v-col>
+        <v-col class="shrink">
+          <v-btn icon small class="info" @click="$fetch()"><v-icon>mdi-refresh</v-icon></v-btn>
         </v-col>
       </v-toolbar>
 
@@ -246,5 +248,9 @@ export default {
   .leaflet-popup-close-button {
     display: none;
   }
+}
+.v-btn--icon.v-size--small {
+  height: 36px;
+  width: 36px;
 }
 </style>
