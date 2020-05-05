@@ -143,14 +143,6 @@ export default {
         }
       })
     },
-    searchFilter(items, search) {
-      return items.filter((i) => {
-        if (!search || search.trim() === '') return true
-        else if (i.username) {
-          return i.username.includes(search)
-        } else return i.snowflake.includes(search)
-      })
-    },
     computePerms(bitfield) {
       const userPerms = []
       for (const perm of this.$store.state.permissions) {
