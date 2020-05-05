@@ -36,7 +36,7 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
             resolve({ status: 'invalid cookies' })
           }
         } else {
-          resolve({ status: 'not logged in' })
+          resolve({ status: 'already logged in' })
         }
       }).catch((err) => {
         console.error(err.error || err)

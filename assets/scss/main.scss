@@ -9,3 +9,19 @@
 .v-overlay.v-overlay--active > .v-overlay__scrim {
   z-index: 2000;
 }
+
+.leaflet-popup {
+  .leaflet-popup-content-wrapper {
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+
+    .leaflet-popup-content {
+      margin: 0;
+    }
+  }
+
+  .leaflet-popup-close-button {
+    display: none;
+  }
+}

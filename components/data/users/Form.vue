@@ -68,7 +68,7 @@ export default {
       this.$api
         .put(`/users/${this.formId}`, { permissions: this.formatPerms(this.formPerms) })
         .then(({ data }) => {
-          this.parentRef.success(`Successfully updated user (ID: ${data.snowflake}`)
+          this.parentRef.success(`Successfully updated user (ID: ${data.snowflake})`)
         })
         .catch(this._onError)
     },

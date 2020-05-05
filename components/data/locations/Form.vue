@@ -37,6 +37,11 @@ export default {
       type: Number,
       default: null
     },
+    id: {
+      type: Number,
+      default: null,
+      validate: (v) => !!v
+    },
     map_id: {
       type: Number,
       default: null,
@@ -47,7 +52,7 @@ export default {
       default: null
     },
     quality: {
-      type: Number,
+      type: String,
       default: null
     },
     location: {
@@ -86,6 +91,19 @@ export default {
           })
           .then(({ data }) => {
             this.parentRef.success(`Successfully add a location`)
+          })
+          .catch(this._onError)
+      }
+    },
+    submit() {
+      if (this.tab === 0) {
+        this.$api
+          .put(`/locations/quality/${this.id}`, {
+            ...this.qualityForm,
+            location: `${this.qualityForm.location.lat}, ${this.qualityForm.location.lng}`
+          })
+          .then(({ data }) => {
+            this.parentRef.success(`Successfully updated location (ID: ${data.id})`)
           })
           .catch(this._onError)
       }

@@ -4,7 +4,7 @@ import { auth, errors } from '../../middleware'
 import { materials } from '../../utils'
 
 import create from './create'
-import read from './read'
+// import read from './read'
 import update from './update'
 import del from './delete'
 
@@ -31,8 +31,16 @@ const qualityBody = body('quality', 'Missing quality')
   })
   .withMessage('Invalid quality format')
 
+const mapIdParam = param('id', 'Map ID is invalid').isNumeric()
+
 const mainBody = [mapIdBody, materialBody, locationBody, qualityBody]
 
 export default (router) => {
   router.post('/locations/quality', [auth('EDIT_MAP'), ...mainBody, errors], create)
+
+  // router.get('/locations/quality/:id', [auth('VIEW_MAP'), mapIdParam, errors], read)
+
+  router.put('/locations/quality/:id', [auth('EDIT_MAP'), mapIdParam, ...mainBody, errors], update)
+
+  router.delete('/locations/quality/:id', [auth('EDIT_MAP'), mapIdParam, errors], del)
 }
