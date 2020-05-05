@@ -30,7 +30,7 @@
         </v-tooltip>
       </v-toolbar>
       <v-container>
-        <v-data-iterator :items="users">
+        <v-data-iterator :items="users" :search="search">
           <template v-slot:default="props">
             <v-row justify="center">
               <v-col v-for="item in props.items" :key="item.snowflake" cols="12" xl="2" lg="3" md="4" sm="6">
@@ -141,6 +141,14 @@ export default {
               else this.$refs.editDialog.error(data.err || data, `${data.type}: ${data.msg}`)
             })
         }
+      })
+    },
+    searchFilter(items, search) {
+      return items.filter((i) => {
+        if (!search || search.trim() === '') return true
+        else if (i.username) {
+          return i.username.includes(search)
+        } else return i.snowflake.includes(search)
       })
     },
     computePerms(bitfield) {
