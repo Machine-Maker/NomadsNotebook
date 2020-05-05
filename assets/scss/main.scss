@@ -6,10 +6,6 @@
   -webkit-box-orient: vertical;
 }
 
-.v-overlay.v-overlay--active > .v-overlay__scrim {
-  z-index: 2000;
-}
-
 .leaflet-popup {
   .leaflet-popup-content-wrapper {
     padding: 0;

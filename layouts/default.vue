@@ -27,7 +27,7 @@
       </v-container>
     </v-content>
     <snackbar />
-    <v-footer fixed app z-index="1000">
+    <v-footer fixed app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>

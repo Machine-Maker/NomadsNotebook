@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="700px" transition="dialog-transition" style="z-index: 2000">
+  <v-dialog v-model="dialog" persistent max-width="700px" transition="dialog-transition">
     <template v-if="!externalButton" v-slot:activator="{ on: openDialog }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on: tooltip }">
