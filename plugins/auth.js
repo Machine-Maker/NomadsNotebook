@@ -106,6 +106,9 @@ export default ({ app, store, redirect, $axios, env }, inject) => {
         })
         .finally(() => store.commit('loading', { t: 'perms', v: false }))
       store.commit('auth/setUser', discordData)
+      app.$cookies.set('auth-username', discordData.username, {
+        path: '/'
+      })
     }
 
     async refreshPerms() {

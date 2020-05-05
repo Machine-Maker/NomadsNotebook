@@ -3,6 +3,7 @@ import express from 'express'
 import Router from 'express-promise-router'
 import { Pool } from 'pg'
 import { serve, setup } from 'swagger-ui-express'
+import cookieParser from 'cookie-parser'
 
 import * as swaggerConfig from '../docs/reference/API.v1.json'
 import { perms, mapTypes, regions, materials } from './utils'
@@ -21,6 +22,8 @@ router.use((req, res, next) => {
   res.req = req
   next()
 })
+
+router.use(cookieParser())
 
 router.use('/docs', serve, setup(swaggerConfig))
 
@@ -79,6 +82,7 @@ router.get('/materials', (req, res) => {
 })
 
 router.get('/@me', (req, res, next) => {
+  console.log(req.cookies)
   if (!req.get('Authorization')) return req.status(400).send('No Authorization header found')
   axios
     .get('https://discordapp.com/api/users/@me', {
