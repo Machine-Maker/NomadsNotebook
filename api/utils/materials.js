@@ -5,5 +5,7 @@ export default {
   'Rupu Vine': 'Rupu Vine',
   Cotton: 'Cotton',
   Cattail: 'Cattail',
-  'Redwood Wood': 'Redwood Wood'
+  'Redwood Wood': 'Redwood Wood',
+  Bone: 'Bone',
+  'Mushroom Flesh': 'Mushroom Flesh'
 }
