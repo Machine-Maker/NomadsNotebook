@@ -1,3 +1,7 @@
+body {
+  background-color: map-get($material-dark, 'background');
+}
+
 .ellipsis-block {
   white-space: normal !important;
   max-height: 100%;
