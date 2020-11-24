@@ -7,5 +7,8 @@ export default {
   Cattail: 'Cattail',
   'Redwood Wood': 'Redwood Wood',
   Bone: 'Bone',
-  'Mushroom Flesh': 'Mushroom Flesh'
+  'Mushroom Flesh': 'Mushroom Flesh',
+  Phemkey: 'Phemkey',
+  Nurr: 'Nurr',
+  Crab: 'Crab'
 }
