@@ -75,6 +75,11 @@ router.get('/materials', (req, res) => {
   for (const mat in materials) {
     result.push({ name: mat, desc: materials[mat] })
   }
+  result.sort((a, b) => {
+    const textA = a.name.toUpperCase()
+    const textB = b.name.toUpperCase()
+    return textA < textB ? -1 : textA > textB ? 1 : 0
+  })
   res.status(200).send(result)
 })
 

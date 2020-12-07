@@ -10,5 +10,15 @@ export default {
   'Mushroom Flesh': 'Mushroom Flesh',
   Phemkey: 'Phemkey',
   Nurr: 'Nurr',
-  Crab: 'Crab'
+  Crab: 'Crab',
+  Ash: 'Ash',
+  'Burnt Tree': 'Burnt Tree',
+  'Burnt Bush': 'Burnt Bush',
+  'Aloe Vera': 'Aloe Vera',
+  'Volcanic Plant': 'Volcanic Plant',
+  Corn: 'Corn',
+  Driftwood: 'Driftwood',
+  Obsidian: 'Obsidian',
+  Lava: 'Lava',
+  Clay: 'Clay'
 }
