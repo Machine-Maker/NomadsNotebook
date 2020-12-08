@@ -20,5 +20,6 @@ export default {
   Driftwood: 'Driftwood',
   Obsidian: 'Obsidian',
   Lava: 'Lava',
-  Clay: 'Clay'
+  Clay: 'Clay',
+  'Palm Leaves': 'Palm Leaves'
 }
